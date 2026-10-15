@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MichiDex - ¡Captura y Colección Pokémon Felina!</title>
+  <title>CatDex - ¡Captura y Colección Pokémon Felina!</title>
   <style>
     :root {
       --bg-color: #fbf7f4;
@@ -180,6 +180,16 @@
       color: white;
     }
 
+    .btn-secondary {
+      background: #f1f2f6;
+      color: #2d3436;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .btn-secondary:hover {
+      background: #dfe4ea;
+    }
+
     /* Visor de Cámara */
     #cameraModal {
       position: fixed;
@@ -305,7 +315,7 @@
       justify-content: center;
     }
 
-    /* Tarjeta de Michi Capturado */
+    /* Tarjeta de Gato Capturado */
     .card-container {
       display: none;
       animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -347,7 +357,7 @@
     .michi-rarity {
       position: absolute;
       top: 14px;
-      right: 14px;
+      right: 56px;
       background: #ffeaa7;
       color: #d63031;
       font-size: 0.75rem;
@@ -356,6 +366,36 @@
       border-radius: 20px;
       z-index: 10;
       box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+
+    .card-close-corner-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(45, 52, 54, 0.75);
+      backdrop-filter: blur(8px);
+      border: none;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 15;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .card-close-corner-btn:hover {
+      background: rgba(45, 52, 54, 0.95);
+      transform: scale(1.1);
+    }
+
+    .card-close-corner-btn:active {
+      transform: scale(0.9);
     }
 
     .michi-photo-wrapper {
@@ -877,8 +917,8 @@
 <body>
 
   <header>
-    <div class="badge-header">🐾 Michi-Sensor TCG Inteligente</div>
-    <h1>Michi<span>Dex</span> 🐱</h1>
+    <div class="badge-header">🐾 Radar Felino TCG Inteligente</div>
+    <h1>Cat<span>Dex</span> 🐱</h1>
     <p class="subtitle">Captura gatos, edita su ficha y genera su carta coleccionable</p>
     <div class="cloud-status" id="cloudStatus">☁️ Base de datos en vivo</div>
   </header>
@@ -896,19 +936,20 @@
       <input type="file" id="galleryInput" accept="image/*">
     </section>
 
-    <!-- Tarjeta de Michi Seleccionado / Capturado -->
+    <!-- Tarjeta de Gato Seleccionado / Capturado -->
     <section class="card-container" id="captureCardSection">
       <div class="michi-card" id="michiCard">
-        <div class="michi-badge">🐾 Michi Capturado</div>
+        <button class="card-close-corner-btn" id="closeCardCornerBtn" type="button" title="Cerrar y volver a la colección">✕</button>
+        <div class="michi-badge">🐾 Gato Capturado</div>
         <div class="michi-rarity" id="cardRarity">⭐ Raro</div>
 
         <div class="michi-photo-wrapper">
-          <img id="michiPhotoImg" class="michi-photo" alt="Michi Capturado">
+          <img id="michiPhotoImg" class="michi-photo" alt="Gato Capturado">
         </div>
 
         <div class="michi-content">
           <div class="celebration-msg" id="cardCelebration">
-            🎉 ¡Michi atrapado con éxito!
+            🎉 ¡Gato atrapado con éxito!
           </div>
 
           <!-- Distintivo de propietario -->
@@ -918,7 +959,7 @@
 
           <!-- Nombre editable -->
           <div class="input-group">
-            <label class="input-label" for="cardNameInput">Nombre del Michi:</label>
+            <label class="input-label" for="cardNameInput">Nombre del Gato:</label>
             <input type="text" id="cardNameInput" class="michi-input" placeholder="Ponle un nombre...">
           </div>
 
@@ -931,7 +972,7 @@
           <!-- Descripción / Dato importante editable -->
           <div class="input-group">
             <label class="input-label" for="cardDescInput">Dato importante / Descripción:</label>
-            <textarea id="cardDescInput" class="michi-textarea" placeholder="Escribe un dato importante o curioso de este michi..."></textarea>
+            <textarea id="cardDescInput" class="michi-textarea" placeholder="Escribe un dato importante o curioso de este gato..."></textarea>
           </div>
 
           <!-- Botones de Acción simplificados -->
@@ -942,6 +983,9 @@
             <button class="btn btn-pokemon btn-big" id="openPokemonCardBtn" type="button">
               🎴 Generar Carta
             </button>
+            <button class="btn btn-secondary" id="closeCardBtn" type="button">
+              ← Volver a la Colección
+            </button>
             <button class="btn-delete-text" id="deleteCatBtn" type="button">
               🗑️ Liberar de la Colección
             </button>
@@ -950,16 +994,16 @@
       </div>
     </section>
 
-    <!-- Colección de Michis con Filtro -->
+    <!-- Colección de Gatos con Filtro -->
     <section class="history-panel">
       <div class="history-header-row">
-        <span class="history-title">📖 Michi-Colección</span>
+        <span class="history-title">📖 Colección de Gatos</span>
         <span class="history-counter badge-header" id="historyCounter" style="margin:0;">0 atrapados</span>
       </div>
 
       <!-- Filtro: Todos vs Solo los míos -->
       <div class="history-tabs">
-        <button class="history-tab active" id="tabAll">Todos los Michis 🐾</button>
+        <button class="history-tab active" id="tabAll">Todos los Gatos 🐾</button>
         <button class="history-tab" id="tabMine">Solo los subidos por mí 👑</button>
       </div>
 
@@ -974,7 +1018,7 @@
     <div class="camera-frame">
       <video id="cameraStream" autoplay playsinline muted></video>
       <div class="cat-crosshair">
-        <div class="crosshair-text">Apunta al Michi</div>
+        <div class="crosshair-text">Apunta al Gato</div>
       </div>
     </div>
     <div class="camera-controls">
@@ -1006,11 +1050,11 @@
           </div>
 
           <div class="tcg-photo-frame">
-            <img id="tcgPhoto" alt="Michi">
+            <img id="tcgPhoto" alt="Gato">
           </div>
 
           <div class="tcg-species-bar" id="tcgSpeciesBar">
-            Nº 025 • Michi Pokémon • Altura: 0.35m • Peso: 4.2kg
+            Nº 025 • Gato Pokémon • Altura: 0.35m • Peso: 4.2kg
           </div>
 
           <div class="tcg-attacks">
@@ -1022,7 +1066,7 @@
                 </div>
                 <span class="tcg-attack-dmg" id="tcgAtkDmg1">30</span>
               </div>
-              <div class="tcg-attack-desc" id="tcgAtkDesc1">Cura 30 PS de ronroneo a este michi.</div>
+              <div class="tcg-attack-desc" id="tcgAtkDesc1">Cura 30 PS de ronroneo a este gato.</div>
             </div>
 
             <div class="tcg-attack" id="tcgAttackBorder2" style="border-bottom:none;">
@@ -1062,7 +1106,7 @@
   <canvas id="pokemonExportCanvas" width="750" height="1050"></canvas>
 
   <footer>
-    <p>MichiDex TCG • Captura, colecciona y comparte 🐾</p>
+    <p>CatDex TCG • Captura, colecciona y comparte 🐾</p>
   </footer>
 
   <script type="module">
@@ -1103,10 +1147,10 @@
     // IDENTIFICADOR DE USUARIO ÚNICO (Dispositivo)
     // Permite saber cuáles fotos fueron subidas por TI
     // ==========================================
-    let myDeviceId = localStorage.getItem('michidex_device_id');
+    let myDeviceId = localStorage.getItem('catdex_device_id') || localStorage.getItem('michidex_device_id');
     if (!myDeviceId) {
-      myDeviceId = 'karen_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
-      localStorage.setItem('michidex_device_id', myDeviceId);
+      myDeviceId = 'user_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+      localStorage.setItem('catdex_device_id', myDeviceId);
     }
 
     // ==========================================
@@ -1265,7 +1309,7 @@
 
     const CAT_NAMES = [
       "Don Bigotes", "Señor Pelusa", "Pantera de Sofá", "Capitán Ronroneo",
-      "Gato Galáctico", "Michi Cósmico", "Michi Amasador", "Doña Siesta",
+      "Gato Galáctico", "Gato Cósmico", "Gato Amasador", "Doña Siesta",
       "Duque de Atún", "Barón Peluche", "Lord Rayitas", "Sultán de la Caja"
     ];
 
@@ -1297,6 +1341,8 @@
 
     // Tarjeta
     const captureCardSection = document.getElementById('captureCardSection');
+    const closeCardCornerBtn = document.getElementById('closeCardCornerBtn');
+    const closeCardBtn = document.getElementById('closeCardBtn');
     const michiPhotoImg = document.getElementById('michiPhotoImg');
     const cardRarity = document.getElementById('cardRarity');
     const cardCelebration = document.getElementById('cardCelebration');
@@ -1409,13 +1455,13 @@
         ? allCats.filter(cat => (!cat.creatorId || cat.creatorId === myDeviceId))
         : allCats;
 
-      historyCounter.textContent = `${filtered.length} ${filtered.length === 1 ? 'michi' : 'michis'}`;
+      historyCounter.textContent = `${filtered.length} ${filtered.length === 1 ? 'gato' : 'gatos'}`;
 
       if (filtered.length === 0) {
         historyGrid.innerHTML = '';
         emptyHistoryMsg.style.display = 'block';
         emptyHistoryMsg.textContent = activeFilter === 'mine' 
-          ? 'Aún no has subido ningún michi. ¡Toma o sube una foto! 🐾'
+          ? 'Aún no has subido ningún gato. ¡Toma o sube una foto! 🐾'
           : 'Aún no hay gatos registrados. ¡Sé el primero! 🐾';
         historyGrid.appendChild(emptyHistoryMsg);
         return;
@@ -1512,14 +1558,14 @@
     function displayCatCard(catData, isNew = false) {
       currentCatData = catData;
       michiPhotoImg.src = catData.image;
-      cardCelebration.textContent = isNew ? "🎉 ¡Nuevo Michi registrado con éxito!" : "📖 Ficha del Michi";
+      cardCelebration.textContent = isNew ? "🎉 ¡Nuevo Gato registrado con éxito!" : "📖 Ficha del Gato";
 
       cardRarity.textContent = catData.rarity.label;
       cardRarity.style.backgroundColor = catData.rarity.color;
       cardRarity.style.color = catData.rarity.textColor;
 
       // Asignar inputs editables
-      cardNameInput.value = catData.name || "Michi sin nombre";
+      cardNameInput.value = catData.name || "Gato sin nombre";
       cardLocationInput.value = catData.location || "En el barrio";
       cardDescInput.value = catData.description || "";
 
@@ -1562,7 +1608,7 @@
     // Guardar cambios editados (Nombre, Ubicación y Descripción)
     saveChangesBtn.addEventListener('click', async () => {
       if (!currentCatData) return;
-      const newName = cardNameInput.value.trim() || "Michi";
+      const newName = cardNameInput.value.trim() || "Gato";
       const newLocation = cardLocationInput.value.trim() || "En el barrio";
       const newDesc = cardDescInput.value.trim();
 
@@ -1588,11 +1634,11 @@
         }
       }
 
-      alert("✅ ¡Ficha del michi actualizada!");
+      alert("✅ ¡Ficha del gato actualizada!");
       renderFilteredHistory();
     });
 
-    // Eliminar / Liberar michi de la colección
+    // Eliminar / Liberar gato de la colección
     deleteCatBtn.addEventListener('click', async () => {
       if (!currentCatData) return;
       if (!confirm(`¿Estás seguro de que quieres liberar a "${currentCatData.name}" de la colección?`)) return;
@@ -1608,8 +1654,17 @@
       allCats = allCats.filter(c => c.id !== currentCatData.id && c.docId !== currentCatData.docId);
       captureCardSection.classList.remove('active');
       renderFilteredHistory();
-      alert("🐾 El michi ha sido liberado.");
+      alert("🐾 El gato ha sido liberado.");
     });
+
+    // Cerrar tarjeta y volver a la colección
+    function closeCard() {
+      captureCardSection.classList.remove('active');
+      document.querySelector('.history-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    if (closeCardCornerBtn) closeCardCornerBtn.addEventListener('click', closeCard);
+    if (closeCardBtn) closeCardBtn.addEventListener('click', closeCard);
 
     // ==========================================
     // PROCESAMIENTO INMEDIATO DE FOTO
@@ -1767,7 +1822,7 @@
       tcgPhoto.src = currentCatData.image;
 
       // Ubicación en la cinta
-      tcgSpeciesBar.textContent = `Nº 025 • Visto en: ${currentCatData.location || "El barrio"} • Michi ${currentCatData.rarity ? currentCatData.rarity.label : 'Raro'}`;
+      tcgSpeciesBar.textContent = `Nº 025 • Visto en: ${currentCatData.location || "El barrio"} • Gato ${currentCatData.rarity ? currentCatData.rarity.label : 'Raro'}`;
 
       // Ataques inteligentes vinculados al elemento
       tcgCost1.textContent = type.atk1.cost;
@@ -1863,7 +1918,7 @@
       ctx.font = "32px sans-serif";
       ctx.fillText(type.icon, 672, 78);
 
-      // 4. Foto del Michi
+      // 4. Foto del Gato
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.onload = () => {
@@ -1890,7 +1945,7 @@
         ctx.fillStyle = "#2c3e50";
         ctx.font = "800 15px sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(`Nº 025 • Visto en: ${cat.location || "El barrio"} • Michi ${cat.rarity ? cat.rarity.label : 'Raro'}`, 375, 530);
+        ctx.fillText(`Nº 025 • Visto en: ${cat.location || "El barrio"} • Gato ${cat.rarity ? cat.rarity.label : 'Raro'}`, 375, 530);
         ctx.textAlign = "left";
 
         // 6. Ataques con contraste inteligente
@@ -1961,7 +2016,7 @@
 
         // Descarga directa PNG
         const link = document.createElement('a');
-        link.download = `Carta-Pokemon-${cat.name.replace(/\s+/g, '_')}.png`;
+        link.download = `Carta-Gato-${cat.name.replace(/\s+/g, '_')}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
       };
