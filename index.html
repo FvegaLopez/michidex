@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MichiDex - ¡Captura a todos los Gatos en la Nube!</title>
+  <style>
+    :root {
+      --bg-color: #fbf7f4;
+      --primary: #ff6f61;
+      --primary-dark: #e85547;
+      --primary-light: #ffe8e4;
+      --secondary: #6c5ce7;
+      --accent: #fdcb6e;
+      --dark: #2d3436;
+      --card-bg: #ffffff;
+      --border-radius: 20px;
+      --shadow: 0 10px 25px rgba(255, 111, 97, 0.15);
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px 16px 40px;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(#ffdfd9 1px, transparent 1px), 
+        radial-gradient(#e2e0fb 1px, var(--bg-color) 1px);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .badge-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .cloud-status {
+      font-size: 0.75rem;
+      color: #00b894;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--dark);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    h1 span {
+      color: var(--primary);
+    }
+
+    p.subtitle {
+      font-size: 0.95rem;
+      color: #636e72;
+      margin-top: 4px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Panel de Acciones */
+    .action-panel {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border: 2px dashed #f0e6e2;
+    }
+
+    .btn-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      user-select: none;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-camera {
+      background: linear-gradient(135deg, #ff7675, #ff6f61);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 111, 97, 0.35);
+    }
+
+    .btn-gallery {
+      background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+      color: white;
+      box-shadow: 0 4px 15px rgba(108, 92, 231, 0.35);
+    }
+
+    .btn-secondary {
+      background: #f1f2f6;
+      color: var(--dark);
+    }
+
+    .btn-share {
+      background: #00b894;
+      color: white;
+    }
+
+    /* Visor de Cámara */
+    #cameraModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.94);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 16px;
+    }
+
+    #cameraModal.active {
+      display: flex;
+    }
+
+    .camera-frame {
+      width: 100%;
+      max-width: 480px;
+      height: 70vh;
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    video#cameraStream {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cat-crosshair {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border: 3px dashed rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    .cat-crosshair::before,
+    .cat-crosshair::after {
+      content: '';
+      position: absolute;
+      top: -18px;
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 25px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .cat-crosshair::before { left: 24px; transform: rotate(-20deg); }
+    .cat-crosshair::after { right: 24px; transform: rotate(20deg); }
+
+    .crosshair-text {
+      color: white;
+      font-size: 0.8rem;
+      font-weight: bold;
+      background: rgba(0,0,0,0.5);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.05); opacity: 1; }
+    }
+
+    .camera-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 420px;
+      gap: 16px;
+    }
+
+    .shutter-btn {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: white;
+      border: 6px solid rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      transition: transform 0.15s;
+    }
+
+    .shutter-btn:active {
+      transform: scale(0.9);
+      background: #ff6f61;
+    }
+
+    .camera-close-btn, .switch-camera-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Estado de Carga / Spinner */
+    .loading-banner {
+      display: none;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      font-weight: 700;
+      color: var(--secondary);
+      border: 2px solid #e2e0fb;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .loading-banner.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(108, 92, 231, 0.2);
+      border-top-color: var(--secondary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Tarjeta de Michi Capturado */
+    .card-container {
+      display: none;
+      animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .card-container.active {
+      display: block;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.85) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .michi-card {
+      background: #fff;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(255, 111, 97, 0.2), 0 3px 10px rgba(0,0,0,0.04);
+      border: 3px solid #ffedea;
+      position: relative;
+    }
+
+    .michi-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(45, 52, 54, 0.75);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      z-index: 10;
+    }
+
+    .michi-rarity {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: #ffeaa7;
+      color: #d63031;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 20px;
+      z-index: 10;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+
+    .michi-photo-wrapper {
+      width: 100%;
+      height: 320px;
+      overflow: hidden;
+      background: #ffe8e4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .michi-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .michi-content {
+      padding: 22px;
+    }
+
+    .celebration-msg {
+      background: #fff0ed;
+      color: var(--primary-dark);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .michi-name-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .michi-name {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--dark);
+    }
+
+    .michi-date {
+      font-size: 0.75rem;
+      color: #b2bec3;
+      font-weight: 600;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat-box {
+      background: #f8f9fa;
+      border: 1px solid #edf0f2;
+      padding: 10px 12px;
+      border-radius: 12px;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: #8395a7;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--dark);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .card-actions button {
+      flex: 1;
+    }
+
+    /* Colección Global */
+    .history-panel {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .history-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .history-counter {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+    }
+
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .history-item {
+      aspect-ratio: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.2s;
+    }
+
+    .history-item:hover {
+      transform: scale(1.04);
+      border-color: var(--primary);
+    }
+
+    .history-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .empty-history {
+      text-align: center;
+      color: #a4b0be;
+      font-size: 0.9rem;
+      padding: 20px 0;
+      grid-column: span 3;
+    }
+
+    #galleryInput, canvas {
+      display: none;
+    }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #95a5a6;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge-header">🐾 Michi-Sensor Activo</div>
+    <h1>Michi<span>Dex</span> 🐱</h1>
+    <p class="subtitle">Captura a los gatos de tu barrio y guárdalos en la nube</p>
+    <div class="cloud-status" id="cloudStatus">☁️ Base de datos activa</div>
+  </header>
+
+  <main>
+    <section class="action-panel">
+      <div class="btn-group">
+        <button class="btn btn-camera" id="openCameraBtn" type="button">
+          📷 Cámara
+        </button>
+        <button class="btn btn-gallery" id="openGalleryBtn" type="button">
+          🖼️ Galería
+        </button>
+      </div>
+      <input type="file" id="galleryInput" accept="image/*">
+    </section>
+
+    <!-- Indicador de guardado en la nube -->
+    <div class="loading-banner" id="loadingBanner">
+      <div class="spinner"></div>
+      <span>Guardando michi en la nube... ☁️🐾</span>
+    </div>
+
+    <!-- Tarjeta de Michi Capturado -->
+    <section class="card-container" id="captureCardSection">
+      <div class="michi-card" id="michiCard">
+        <div class="michi-badge">🐾 Michi Capturado</div>
+        <div class="michi-rarity" id="cardRarity">⭐ Raro</div>
+
+        <div class="michi-photo-wrapper">
+          <img id="michiPhotoImg" class="michi-photo" alt="Michi Capturado">
+        </div>
+
+        <div class="michi-content">
+          <div class="celebration-msg" id="cardCelebration">
+            🎉 ¡Michi atrapado con éxito!
+          </div>
+
+          <div class="michi-name-row">
+            <h2 class="michi-name" id="cardName">Señor Bigotes</h2>
+            <span class="michi-date" id="cardDate">Hoy</span>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-label">⚡ Ronroneo</div>
+              <div class="stat-val" id="cardPurr">94 dB</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">✨ Superpoder</div>
+              <div class="stat-val" id="cardPower">Amasar pan</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">😸 Temperamento</div>
+              <div class="stat-val" id="cardMood">Mimoso</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">🏆 Rango</div>
+              <div class="stat-val" id="cardRank">Capitán Felino</div>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button class="btn btn-secondary" id="saveCardBtn" type="button">
+              💾 Guardar
+            </button>
+            <button class="btn btn-share" id="shareBtn" type="button">
+              📤 Compartir
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Historial / Colección Global -->
+    <section class="history-panel">
+      <div class="history-title">
+        <span>📖 Michi-Colección</span>
+        <span class="history-counter" id="historyCounter">0 atrapados</span>
+      </div>
+      <div class="history-grid" id="historyGrid">
+        <div class="empty-history" id="emptyHistoryMsg">Aún no hay gatos registrados en la nube. ¡Sé el primero! 🐾</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal Pantalla Completa de Cámara -->
+  <div id="cameraModal">
+    <div class="camera-frame">
+      <video id="cameraStream" autoplay playsinline muted></video>
+      <div class="cat-crosshair">
+        <div class="crosshair-text">Apunta al Michi</div>
+      </div>
+    </div>
+    <div class="camera-controls">
+      <button class="camera-close-btn" id="closeCameraBtn" title="Cancelar">✕</button>
+      <button class="shutter-btn" id="shutterBtn" title="Tomar foto">🐾</button>
+      <button class="switch-camera-btn" id="switchCameraBtn" title="Cambiar cámara">🔄</button>
+    </div>
+  </div>
+
+  <canvas id="snapshotCanvas"></canvas>
+
+  <footer>
+    <p>MichiDex Cloud • Fotos seguras en la nube 🐾</p>
+  </footer>
+
+  <!-- SCRIPT CON FIREBASE + MÓDULOS MODERNOS -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    /* ========================================================
+       CONFIGURACIÓN DE TU PROYECTO FIREBASE
+       Reemplaza estos valores con los que te da la consola de Firebase:
+       ======================================================== */
+    const firebaseConfig = {
+      apiKey: "AIzaSyADSNbQp5rhRU_JdkW0wXePqpJQazTY26E",
+      authDomain: "michidex-38afc.firebaseapp.com",
+      projectId: "michidex-38afc",
+      storageBucket: "michidex-38afc.firebasestorage.app",
+      messagingSenderId: "603819077572",
+      appId: "1:603819077572:web:bdf0d1b3d8860132de7e91"
+    };
+
+    // Verificamos si las credenciales ya fueron colocadas o usamos IndexedDB local
+    const isFirebaseConfigured = firebaseConfig.apiKey !== "TU_API_KEY";
+    const cloudStatus = document.getElementById('cloudStatus');
+
+    let db = null;
+    let storage = null;
+
+    if (isFirebaseConfigured) {
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        storage = getStorage(app);
+        cloudStatus.textContent = "☁️ Firebase Cloud conectado en vivo";
+        cloudStatus.style.color = "#00b894";
+      } catch (e) {
+        console.error("Error iniciando Firebase:", e);
+        cloudStatus.textContent = "⚠️ Error en Firebase (usando caché local)";
+        cloudStatus.style.color = "#d63031";
+      }
+    } else {
+      cloudStatus.textContent = "💾 Modo Local (Agrega tus credenciales Firebase para sincronizar en la nube)";
+      cloudStatus.style.color = "#6c5ce7";
+    }
+
+    // Datos lúdicos para la tarjeta
+    const CAT_NAMES = [
+      "Don Bigotes", "Señor Pelusa", "Pantera de Sofá", "Capitán Ronroneo",
+      "Gato Galáctico", "Michi Cósmico", "Michi Amasador", "Doña Siesta",
+      "Duque de Atún", "Barón Peluche", "Lord Rayitas", "Sultán de la Caja"
+    ];
+
+    const CELEBRATIONS = [
+      "🎉 ¡MIAU-SOMBROSO! ¡Un michi salvaje ha sido capturado!",
+      "😻 ¡Encontraste un ejemplar único en su especie!",
+      "🐟 ¡El detector de caricias fue 100% efectivo!",
+      "✨ ¡El michi no pudo resistirse a tu presencia!",
+      "🐈 ¡Nuevo michi registrado en la MichiDex con éxito!"
+    ];
+
+    const RARITIES = [
+      { label: "⭐ Común de Sofá", color: "#fdcb6e", textColor: "#2d3436" },
+      { label: "✨ Raro Callejero", color: "#81ecec", textColor: "#0984e3" },
+      { label: "💎 Épico Panza Arriba", color: "#a29bfe", textColor: "#6c5ce7" },
+      { label: "🔥 Legendario Supremo", color: "#ff7675", textColor: "#d63031" }
+    ];
+
+    const POWERS = [
+      "Amasar pan veloz", "Zoomies a las 3 AM", "Tirar vasos al piso",
+      "Dormir 20 horas", "Maullido hipnótico", "Desaparecer en cajas",
+      "Saltar a la nada", "Cazar rayos láser invisibles"
+    ];
+
+    const MOODS = ["Mimoso", "Exigente", "Dormilón", "Curioso", "Travieso", "Rey del hogar"];
+    const RANKS = ["Cazador Novato", "Guardián de Sofás", "Capitán Felino", "Miau-estro Supremo"];
+
+    // Elementos DOM
+    const openCameraBtn = document.getElementById('openCameraBtn');
+    const openGalleryBtn = document.getElementById('openGalleryBtn');
+    const galleryInput = document.getElementById('galleryInput');
+    const cameraModal = document.getElementById('cameraModal');
+    const cameraStream = document.getElementById('cameraStream');
+    const shutterBtn = document.getElementById('shutterBtn');
+    const closeCameraBtn = document.getElementById('closeCameraBtn');
+    const switchCameraBtn = document.getElementById('switchCameraBtn');
+    const snapshotCanvas = document.getElementById('snapshotCanvas');
+    const loadingBanner = document.getElementById('loadingBanner');
+
+    const captureCardSection = document.getElementById('captureCardSection');
+    const michiPhotoImg = document.getElementById('michiPhotoImg');
+    const cardRarity = document.getElementById('cardRarity');
+    const cardCelebration = document.getElementById('cardCelebration');
+    const cardName = document.getElementById('cardName');
+    const cardDate = document.getElementById('cardDate');
+    const cardPurr = document.getElementById('cardPurr');
+    const cardPower = document.getElementById('cardPower');
+    const cardMood = document.getElementById('cardMood');
+    const cardRank = document.getElementById('cardRank');
+    const shareBtn = document.getElementById('shareBtn');
+    const saveCardBtn = document.getElementById('saveCardBtn');
+
+    const historyGrid = document.getElementById('historyGrid');
+    const emptyHistoryMsg = document.getElementById('emptyHistoryMsg');
+    const historyCounter = document.getElementById('historyCounter');
+
+    let currentStream = null;
+    let currentFacingMode = 'environment';
+    let currentCatData = null;
+    let localIndexedDbCats = [];
+
+    // ==========================================
+    // INDEXED-DB (Fallback persistente ilimitado)
+    // ==========================================
+    function openLocalDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open('MichiDexDB', 1);
+        req.onupgradeneeded = (e) => {
+          const dbInstance = e.target.result;
+          if (!dbInstance.objectStoreNames.contains('cats')) {
+            dbInstance.createObjectStore('cats', { keyPath: 'id' });
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function saveLocalCat(cat) {
+      try {
+        const idb = await openLocalDB();
+        const tx = idb.transaction('cats', 'readwrite');
+        tx.objectStore('cats').put(cat);
+      } catch (e) {
+        console.warn("IndexedDB error:", e);
+      }
+    }
+
+    async function loadLocalCats() {
+      try {
+        const idb = await openLocalDB();
+        const tx = idb.transaction('cats', 'readonly');
+        const req = tx.objectStore('cats').getAll();
+        req.onsuccess = () => {
+          localIndexedDbCats = req.result || [];
+          localIndexedDbCats.sort((a,b) => b.timestamp - a.timestamp);
+          renderHistory(localIndexedDbCats);
+        };
+      } catch (e) {}
+    }
+
+    // ==========================================
+    // RENDERIZADO DE LA COLECCIÓN
+    // ==========================================
+    function renderHistory(cats) {
+      if (!cats || cats.length === 0) {
+        emptyHistoryMsg.style.display = 'block';
+        historyCounter.textContent = '0 atrapados';
+        historyGrid.innerHTML = '';
+        historyGrid.appendChild(emptyHistoryMsg);
+        return;
+      }
+
+      emptyHistoryMsg.style.display = 'none';
+      historyCounter.textContent = `${cats.length} ${cats.length === 1 ? 'atrapado' : 'atrapados'}`;
+      historyGrid.innerHTML = '';
+
+      cats.forEach(cat => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.title = cat.name;
+        item.innerHTML = `<img src="${cat.image}" alt="${cat.name}">`;
+        item.addEventListener('click', () => displayCatCard(cat, false));
+        historyGrid.appendChild(item);
+      });
+    }
+
+    // Si Firebase está activo, sincronizamos en tiempo real
+    if (db) {
+      try {
+        const q = query(collection(db, "michis"), orderBy("timestamp", "desc"));
+        onSnapshot(q, (snapshot) => {
+          const cats = [];
+          snapshot.forEach(doc => cats.push({ id: doc.id, ...doc.data() }));
+          renderHistory(cats);
+        });
+      } catch (e) {
+        console.error("Error al escuchar en Firestore:", e);
+      }
+    } else {
+      loadLocalCats();
+    }
+
+    // Efecto de sonido felino
+    function playPurrSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(750, audioCtx.currentTime + 0.15);
+        osc.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.35);
+
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } catch (e) {}
+    }
+
+    function generateRandomCatStats(imageSrc) {
+      const rarity = RARITIES[Math.floor(Math.random() * RARITIES.length)];
+      const name = CAT_NAMES[Math.floor(Math.random() * CAT_NAMES.length)];
+      const celebration = CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)];
+      const power = POWERS[Math.floor(Math.random() * POWERS.length)];
+      const mood = MOODS[Math.floor(Math.random() * MOODS.length)];
+      const rank = RANKS[Math.floor(Math.random() * RANKS.length)];
+      const purr = Math.floor(Math.random() * 40 + 70) + " dB";
+      
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) + " " + 
+                      now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      return {
+        image: imageSrc,
+        name,
+        rarity,
+        celebration,
+        power,
+        mood,
+        rank,
+        purr,
+        date: dateStr,
+        timestamp: Date.now(),
+        id: 'michi_' + Date.now()
+      };
+    }
+
+    function displayCatCard(catData, isNew = false) {
+      currentCatData = catData;
+      michiPhotoImg.src = catData.image;
+      cardName.textContent = catData.name;
+      cardCelebration.textContent = catData.celebration;
+      cardRarity.textContent = catData.rarity.label;
+      cardRarity.style.backgroundColor = catData.rarity.color;
+      cardRarity.style.color = catData.rarity.textColor;
+
+      cardPower.textContent = catData.power;
+      cardMood.textContent = catData.mood;
+      cardRank.textContent = catData.rank;
+      cardPurr.textContent = catData.purr;
+      cardDate.textContent = catData.date;
+
+      captureCardSection.classList.remove('active');
+      void captureCardSection.offsetWidth;
+      captureCardSection.classList.add('active');
+
+      if (isNew) playPurrSound();
+      captureCardSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ==========================================
+    // PROCESAMIENTO Y GUARDADO (CLOUD O LOCAL)
+    // ==========================================
+    async function processCatImage(dataUrl) {
+      loadingBanner.classList.add('active');
+      const catData = generateRandomCatStats(dataUrl);
+
+      if (isFirebaseConfigured && db && storage) {
+        try {
+          // 1. Subir la imagen a Firebase Storage
+          const filename = `cats/${catData.id}.jpg`;
+          const storageRef = ref(storage, filename);
+          await uploadString(storageRef, dataUrl, 'data_url');
+          
+          // 2. Obtener URL de descarga permanente
+          const permanentUrl = await getDownloadURL(storageRef);
+          catData.image = permanentUrl;
+
+          // 3. Guardar registro en Cloud Firestore
+          await addDoc(collection(db, "michis"), catData);
+        } catch (err) {
+          console.error("Error subiendo a Firebase:", err);
+          alert("Aviso: No se pudo subir a Firebase. Guardando localmente.");
+          await saveLocalCat(catData);
+          loadLocalCats();
+        }
+      } else {
+        // Guardado local sin límite en IndexedDB
+        await saveLocalCat(catData);
+        loadLocalCats();
+      }
+
+      loadingBanner.classList.remove('active');
+      displayCatCard(catData, true);
+    }
+
+    // Redimensionar imagen para optimizar subida
+    function compressImage(imgSource, maxWidth = 1000) {
+      const canvas = document.createElement('canvas');
+      let width = imgSource.videoWidth || imgSource.width;
+      let height = imgSource.videoHeight || imgSource.height;
+
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(imgSource, 0, 0, width, height);
+
+      return canvas.toDataURL('image/jpeg', 0.85);
+    }
+
+    // ==========================================
+    // CÁMARA
+    // ==========================================
+    async function startCamera() {
+      try {
+        if (currentStream) stopCamera();
+
+        const constraints = {
+          video: {
+            facingMode: currentFacingMode,
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        };
+
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        cameraStream.srcObject = currentStream;
+        cameraModal.classList.add('active');
+      } catch (err) {
+        try {
+          currentStream = await navigator.mediaDevices.getUserMedia({ video: true });
+          cameraStream.srcObject = currentStream;
+          cameraModal.classList.add('active');
+        } catch (fallbackErr) {
+          alert("No se pudo acceder a la cámara. Comprueba los permisos o usa 'Galería'.");
+        }
+      }
+    }
+
+    function stopCamera() {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+      }
+      cameraStream.srcObject = null;
+      cameraModal.classList.remove('active');
+    }
+
+    function takeSnapshot() {
+      if (!cameraStream.videoWidth) return;
+      const optimizedDataUrl = compressImage(cameraStream);
+      stopCamera();
+      processCatImage(optimizedDataUrl);
+    }
+
+    // Listeners
+    openCameraBtn.addEventListener('click', () => {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        galleryInput.setAttribute('capture', 'environment');
+        galleryInput.click();
+        return;
+      }
+      startCamera();
+    });
+
+    closeCameraBtn.addEventListener('click', stopCamera);
+    shutterBtn.addEventListener('click', takeSnapshot);
+
+    switchCameraBtn.addEventListener('click', () => {
+      currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+      startCamera();
+    });
+
+    openGalleryBtn.addEventListener('click', () => {
+      galleryInput.removeAttribute('capture');
+      galleryInput.click();
+    });
+
+    galleryInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const img = new Image();
+          img.onload = () => {
+            const optimized = compressImage(img);
+            processCatImage(optimized);
+          };
+          img.src = evt.target.result;
+          galleryInput.value = '';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    saveCardBtn.addEventListener('click', () => {
+      if (!currentCatData) return;
+      const link = document.createElement('a');
+      link.download = `Michi-${currentCatData.name.replace(/\s+/g, '_')}.jpg`;
+      link.href = currentCatData.image;
+      link.target = "_blank";
+      link.click();
+    });
+
+    shareBtn.addEventListener('click', async () => {
+      if (!currentCatData) return;
+      const shareText = `🐾 ¡Acabo de registrar a "${currentCatData.name}" en MichiDex Cloud! Nivel de ronroneo: ${currentCatData.purr}. Rango: ${currentCatData.rank}. 😸`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: '¡Michi Capturado!',
+            text: shareText,
+            url: window.location.href
+          });
+        } catch (err) {}
+      } else {
+        navigator.clipboard.writeText(shareText).then(() => {
+          alert("¡Mensaje copiado al portapapeles!");
+        }).catch(() => alert(shareText));
+      }
+    });
+  </script>
+</body>
+</html>
