@@ -491,46 +491,37 @@
       border-color: #f1f2f6;
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 14px 0 16px;
-    }
-
-    .stat-box {
-      background: #f8f9fa;
-      border: 1px solid #edf0f2;
-      padding: 9px 12px;
-      border-radius: 12px;
+    .card-actions-stack {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-    }
-
-    .stat-label {
-      font-size: 0.72rem;
-      color: #8395a7;
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .stat-val {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--dark);
-    }
-
-    .card-actions-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: 10px;
+      margin-top: 14px;
     }
 
-    .card-actions-grid .btn-full {
-      grid-column: span 2;
+    .btn-big {
+      padding: 16px 20px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      border-radius: 16px;
+      width: 100%;
+    }
+
+    .btn-delete-text {
+      background: transparent;
+      color: #e85547;
+      border: 1px dashed #fab1a0;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      margin-top: 2px;
+    }
+
+    .btn-delete-text:hover {
+      background: #ffe8e4;
     }
 
     /* Pestañas de Colección */
@@ -931,52 +922,27 @@
             <input type="text" id="cardNameInput" class="michi-input" placeholder="Ponle un nombre...">
           </div>
 
+          <!-- Dónde fue visto / Ubicación -->
+          <div class="input-group">
+            <label class="input-label" for="cardLocationInput">📍 Dónde fue visto / Ubicación:</label>
+            <input type="text" id="cardLocationInput" class="michi-input" placeholder="Ej: En la plaza, en el tejado, mi patio...">
+          </div>
+
           <!-- Descripción / Dato importante editable -->
           <div class="input-group">
-            <label class="input-label" for="cardDescInput">Dato curioso / Descripción:</label>
-            <textarea id="cardDescInput" class="michi-textarea" placeholder="¿Qué le gusta hacer? Escribe un dato importante..."></textarea>
+            <label class="input-label" for="cardDescInput">Dato importante / Descripción:</label>
+            <textarea id="cardDescInput" class="michi-textarea" placeholder="Escribe un dato importante o curioso de este michi..."></textarea>
           </div>
 
-          <!-- Estadísticas con Selector Inteligente de Tipo -->
-          <div class="stats-grid">
-            <div class="stat-box">
-              <div class="stat-label">⚡ Ronroneo</div>
-              <div class="stat-val" id="cardPurr">94 dB</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">✨ Superpoder</div>
-              <div class="stat-val" id="cardPower">Amasar pan</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">😸 Temperamento</div>
-              <div class="stat-val" id="cardMood">Mimoso</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">🎴 Tipo Pokémon</div>
-              <select id="cardPokeTypeSelect" class="michi-type-select">
-                <option value="Fuego">🔥 Fuego (Michi Naranja)</option>
-                <option value="Siniestro">🌑 Siniestro (Pantera)</option>
-                <option value="Psíquico">👁️ Psíquico (Cósmico)</option>
-                <option value="Eléctrico">⚡ Eléctrico (Zoomies)</option>
-                <option value="Planta">🌿 Planta (Hierba gatera)</option>
-                <option value="Agua">💧 Agua (Pescador)</option>
-                <option value="Normal">🔘 Normal (Dormilón)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Botones de Acción -->
-          <div class="card-actions-grid">
-            <button class="btn btn-pokemon btn-full" id="openPokemonCardBtn" type="button">
-              🎴 Descargar Carta Pokémon
-            </button>
-            <button class="btn btn-save-changes" id="saveChangesBtn" type="button">
+          <!-- Botones de Acción simplificados -->
+          <div class="card-actions-stack">
+            <button class="btn btn-save-changes btn-big" id="saveChangesBtn" type="button">
               💾 Guardar
             </button>
-            <button class="btn btn-share" id="shareBtn" type="button">
-              📤 Compartir
+            <button class="btn btn-pokemon btn-big" id="openPokemonCardBtn" type="button">
+              🎴 Generar Carta
             </button>
-            <button class="btn btn-delete btn-full" id="deleteCatBtn" type="button">
+            <button class="btn-delete-text" id="deleteCatBtn" type="button">
               🗑️ Liberar de la Colección
             </button>
           </div>
@@ -1336,15 +1302,11 @@
     const cardCelebration = document.getElementById('cardCelebration');
     const cardOwnerPill = document.getElementById('cardOwnerPill');
     const cardNameInput = document.getElementById('cardNameInput');
+    const cardLocationInput = document.getElementById('cardLocationInput');
     const cardDescInput = document.getElementById('cardDescInput');
-    const cardPurr = document.getElementById('cardPurr');
-    const cardPower = document.getElementById('cardPower');
-    const cardMood = document.getElementById('cardMood');
-    const cardPokeTypeSelect = document.getElementById('cardPokeTypeSelect');
 
     const saveChangesBtn = document.getElementById('saveChangesBtn');
     const deleteCatBtn = document.getElementById('deleteCatBtn');
-    const shareBtn = document.getElementById('shareBtn');
     const openPokemonCardBtn = document.getElementById('openPokemonCardBtn');
 
     // Tabs & Grid
@@ -1530,6 +1492,7 @@
         id: 'michi_' + Date.now(),
         image: imageSrc,
         name: name,
+        location: "Visto en el barrio",
         description: desc,
         rarity: rarity,
         pokeTypeName: pokeType.name,
@@ -1557,13 +1520,8 @@
 
       // Asignar inputs editables
       cardNameInput.value = catData.name || "Michi sin nombre";
+      cardLocationInput.value = catData.location || "En el barrio";
       cardDescInput.value = catData.description || "";
-
-      cardPurr.textContent = catData.purr || "85 dB";
-      const typeObj = getTypeByName(catData.pokeTypeName || (catData.pokeType && catData.pokeType.name));
-      cardPower.textContent = typeObj.atk1.name;
-      cardMood.textContent = catData.mood || "Mimoso";
-      cardPokeTypeSelect.value = typeObj.name;
 
       // Control de Permisos: ¿Es subido por TI?
       const isMine = (!catData.creatorId || catData.creatorId === myDeviceId);
@@ -1572,17 +1530,25 @@
         cardOwnerPill.className = "michi-owner-pill mine";
         cardOwnerPill.textContent = "👑 Subido por ti (Puedes editarlo)";
         cardNameInput.disabled = false;
+        cardLocationInput.disabled = false;
         cardDescInput.disabled = false;
-        cardPokeTypeSelect.disabled = false;
+
+        // Botones para el dueño: Guardar en grande y Generar Carta debajo
         saveChangesBtn.style.display = "inline-flex";
+        openPokemonCardBtn.textContent = "🎴 Generar Carta";
+        openPokemonCardBtn.style.display = "inline-flex";
         deleteCatBtn.style.display = "inline-flex";
       } else {
         cardOwnerPill.className = "michi-owner-pill others";
         cardOwnerPill.textContent = "🐾 Subido por otro explorador (Solo lectura)";
         cardNameInput.disabled = true;
+        cardLocationInput.disabled = true;
         cardDescInput.disabled = true;
-        cardPokeTypeSelect.disabled = true;
+
+        // Botones para gatos de otros: Solo "Descargar Carta" (sin 'Pokémon')
         saveChangesBtn.style.display = "none";
+        openPokemonCardBtn.textContent = "📥 Descargar Carta";
+        openPokemonCardBtn.style.display = "inline-flex";
         deleteCatBtn.style.display = "none";
       }
 
@@ -1593,16 +1559,16 @@
       captureCardSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // Guardar cambios editados (Nombre, Descripción y Tipo)
+    // Guardar cambios editados (Nombre, Ubicación y Descripción)
     saveChangesBtn.addEventListener('click', async () => {
       if (!currentCatData) return;
       const newName = cardNameInput.value.trim() || "Michi";
+      const newLocation = cardLocationInput.value.trim() || "En el barrio";
       const newDesc = cardDescInput.value.trim();
-      const newType = cardPokeTypeSelect.value;
 
       currentCatData.name = newName;
+      currentCatData.location = newLocation;
       currentCatData.description = newDesc;
-      currentCatData.pokeTypeName = newType;
 
       // 1. Guardar local
       await saveLocalCat(currentCatData);
@@ -1612,8 +1578,8 @@
         try {
           await updateDoc(doc(db, "michis", currentCatData.docId), {
             name: newName,
-            description: newDesc,
-            pokeTypeName: newType
+            location: newLocation,
+            description: newDesc
           });
           cloudStatus.textContent = "☁️ ¡Cambios guardados en la nube!";
           cloudStatus.style.color = "#00b894";
@@ -1768,18 +1734,6 @@
       }
     });
 
-    shareBtn.addEventListener('click', async () => {
-      if (!currentCatData) return;
-      const text = `🐾 ¡Mira este michi capturado en MichiDex: "${currentCatData.name}"! Tipo: ${currentCatData.pokeTypeName}. ¿Cuántos gatos tienes en tu colección? 😸`;
-      if (navigator.share) {
-        try {
-          await navigator.share({ title: 'MichiDex', text: text, url: window.location.href });
-        } catch (e) {}
-      } else {
-        navigator.clipboard.writeText(text).then(() => alert("¡Mensaje copiado al portapapeles!"));
-      }
-    });
-
     // ==========================================
     // CARTA POKÉMON (MODAL & DESCARGA PNG CON INTELIGENCIA VISUAL)
     // ==========================================
@@ -1811,6 +1765,9 @@
       tcgHp.textContent = currentCatData.hp || 120;
       tcgTypeIcon.textContent = type.icon;
       tcgPhoto.src = currentCatData.image;
+
+      // Ubicación en la cinta
+      tcgSpeciesBar.textContent = `Nº 025 • Visto en: ${currentCatData.location || "El barrio"} • Michi ${currentCatData.rarity ? currentCatData.rarity.label : 'Raro'}`;
 
       // Ataques inteligentes vinculados al elemento
       tcgCost1.textContent = type.atk1.cost;
@@ -1933,7 +1890,7 @@
         ctx.fillStyle = "#2c3e50";
         ctx.font = "800 15px sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(`Nº 025 • Michi ${cat.rarity ? cat.rarity.label : 'Raro'} • Altura: 0.35 m • Peso: 4.2 kg`, 375, 530);
+        ctx.fillText(`Nº 025 • Visto en: ${cat.location || "El barrio"} • Michi ${cat.rarity ? cat.rarity.label : 'Raro'}`, 375, 530);
         ctx.textAlign = "left";
 
         // 6. Ataques con contraste inteligente
