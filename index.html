@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MichiDex - ¡Captura a todos los Gatos en la Nube!</title>
+  <title>MichiDex - ¡Captura y Colección Pokémon Felina!</title>
   <style>
     :root {
       --bg-color: #fbf7f4;
@@ -66,7 +66,7 @@
     }
 
     .cloud-status {
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: #00b894;
       display: inline-flex;
       align-items: center;
@@ -127,8 +127,8 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 14px 16px;
-      font-size: 1rem;
+      padding: 13px 16px;
+      font-size: 0.95rem;
       font-weight: 700;
       border: none;
       border-radius: 14px;
@@ -160,6 +160,23 @@
 
     .btn-share {
       background: #00b894;
+      color: white;
+    }
+
+    .btn-pokemon {
+      background: linear-gradient(135deg, #f1c40f, #e67e22);
+      color: #2d3436;
+      font-weight: 800;
+      box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);
+    }
+
+    .btn-delete {
+      background: #ff7675;
+      color: white;
+    }
+
+    .btn-save-changes {
+      background: #0984e3;
       color: white;
     }
 
@@ -288,39 +305,6 @@
       justify-content: center;
     }
 
-    /* Estado de Carga / Spinner */
-    .loading-banner {
-      display: none;
-      background: #ffffff;
-      padding: 16px;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      text-align: center;
-      font-weight: 700;
-      color: var(--secondary);
-      border: 2px solid #e2e0fb;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .loading-banner.active {
-      display: flex;
-    }
-
-    .spinner {
-      width: 24px;
-      height: 24px;
-      border: 3px solid rgba(108, 92, 231, 0.2);
-      border-top-color: var(--secondary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
     /* Tarjeta de Michi Capturado */
     .card-container {
       display: none;
@@ -349,7 +333,7 @@
       position: absolute;
       top: 14px;
       left: 14px;
-      background: rgba(45, 52, 54, 0.75);
+      background: rgba(45, 52, 54, 0.8);
       backdrop-filter: blur(8px);
       color: #fff;
       font-size: 0.75rem;
@@ -376,7 +360,7 @@
 
     .michi-photo-wrapper {
       width: 100%;
-      height: 320px;
+      height: 300px;
       overflow: hidden;
       background: #ffe8e4;
       display: flex;
@@ -391,7 +375,7 @@
     }
 
     .michi-content {
-      padding: 22px;
+      padding: 20px;
     }
 
     .celebration-msg {
@@ -399,51 +383,116 @@
       color: var(--primary-dark);
       padding: 10px 14px;
       border-radius: 12px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       text-align: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
-    .michi-name-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
+    .michi-owner-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
       margin-bottom: 12px;
     }
 
-    .michi-name {
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: var(--dark);
+    .michi-owner-pill.mine {
+      background: #e8f8f5;
+      color: #00b894;
+      border: 1px solid #c2f0e4;
     }
 
-    .michi-date {
+    .michi-owner-pill.others {
+      background: #f1f2f6;
+      color: #747d8c;
+      border: 1px solid #dfe4ea;
+    }
+
+    /* Campos editables */
+    .input-group {
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .input-label {
       font-size: 0.75rem;
-      color: #b2bec3;
-      font-weight: 600;
+      color: #7f8c8d;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .michi-input {
+      font-family: inherit;
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #edf0f2;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--dark);
+      background: #fafafa;
+      transition: all 0.2s;
+    }
+
+    .michi-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .michi-textarea {
+      font-family: inherit;
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #edf0f2;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      color: #2d3436;
+      background: #fafafa;
+      resize: vertical;
+      min-height: 55px;
+      transition: all 0.2s;
+    }
+
+    .michi-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .michi-input:disabled, .michi-textarea:disabled {
+      background: #f8f9fa;
+      color: #636e72;
+      cursor: not-allowed;
+      border-color: #f1f2f6;
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-bottom: 18px;
+      margin: 14px 0 16px;
     }
 
     .stat-box {
       background: #f8f9fa;
       border: 1px solid #edf0f2;
-      padding: 10px 12px;
+      padding: 9px 12px;
       border-radius: 12px;
     }
 
     .stat-label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #8395a7;
       text-transform: uppercase;
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .stat-val {
@@ -452,17 +501,18 @@
       color: var(--dark);
     }
 
-    .card-actions {
-      display: flex;
+    .card-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: 14px;
+      margin-top: 10px;
     }
 
-    .card-actions button {
-      flex: 1;
+    .card-actions-grid .btn-full {
+      grid-column: span 2;
     }
 
-    /* Colección Global */
+    /* Pestañas de Colección */
     .history-panel {
       background: var(--card-bg);
       border-radius: var(--border-radius);
@@ -470,21 +520,44 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     }
 
-    .history-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-      margin-bottom: 14px;
+    .history-header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 14px;
     }
 
-    .history-counter {
-      background: var(--primary-light);
-      color: var(--primary);
-      padding: 3px 10px;
-      border-radius: 999px;
+    .history-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .history-tabs {
+      display: flex;
+      background: #f1f2f6;
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      gap: 4px;
+    }
+
+    .history-tab {
+      flex: 1;
+      padding: 8px 10px;
       font-size: 0.8rem;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #747d8c;
+      transition: all 0.2s;
+    }
+
+    .history-tab.active {
+      background: #fff;
+      color: var(--primary-dark);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
     .history-grid {
@@ -500,6 +573,7 @@
       cursor: pointer;
       border: 2px solid transparent;
       transition: transform 0.2s;
+      position: relative;
     }
 
     .history-item:hover {
@@ -513,15 +587,269 @@
       object-fit: cover;
     }
 
+    .history-item .mine-indicator {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(0, 184, 148, 0.9);
+      color: white;
+      font-size: 0.65rem;
+      padding: 2px 5px;
+      border-radius: 6px;
+      font-weight: 800;
+    }
+
     .empty-history {
       text-align: center;
       color: #a4b0be;
       font-size: 0.9rem;
-      padding: 20px 0;
+      padding: 24px 0;
       grid-column: span 3;
     }
 
-    #galleryInput, canvas {
+    /* ==========================================
+       MODAL DE CARTA POKÉMON COLECCIONABLE
+       ========================================== */
+    .poke-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.88);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .poke-modal.active {
+      display: flex;
+    }
+
+    .poke-modal-box {
+      background: #1e272e;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 380px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .poke-modal-top {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #ffeaa7;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .poke-close-btn {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Carta estilo TCG */
+    .tcg-card {
+      width: 330px;
+      height: 470px;
+      border-radius: 18px;
+      background: #f1c40f;
+      padding: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      user-select: none;
+      border: 2px solid #d4ac0d;
+    }
+
+    .tcg-inner {
+      background: linear-gradient(135deg, #e17055, #fab1a0);
+      flex: 1;
+      border-radius: 12px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(255,255,255,0.4);
+      position: relative;
+    }
+
+    .tcg-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .tcg-stage {
+      font-size: 0.62rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      background: rgba(255,255,255,0.8);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #2d3436;
+    }
+
+    .tcg-name {
+      font-size: 1rem;
+      font-weight: 900;
+      color: #2d3436;
+      flex: 1;
+      margin-left: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tcg-hp-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+    }
+
+    .tcg-hp-lbl {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #d63031;
+    }
+
+    .tcg-hp-num {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #d63031;
+    }
+
+    .tcg-type-icon {
+      font-size: 1.1rem;
+      margin-left: 4px;
+    }
+
+    .tcg-photo-frame {
+      width: 100%;
+      height: 165px;
+      border-radius: 8px;
+      background: #000;
+      border: 3px solid #f1c40f;
+      overflow: hidden;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .tcg-photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .tcg-species-bar {
+      background: linear-gradient(90deg, #f39c12, #f1c40f);
+      font-size: 0.6rem;
+      font-weight: 800;
+      text-align: center;
+      padding: 2px 4px;
+      border-radius: 4px;
+      color: #2c3e50;
+      margin: 4px 0 6px;
+      letter-spacing: 0.2px;
+    }
+
+    .tcg-attacks {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .tcg-attack {
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      padding-bottom: 4px;
+    }
+
+    .tcg-attack-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tcg-attack-left {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .tcg-cost {
+      font-size: 0.85rem;
+    }
+
+    .tcg-attack-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #2d3436;
+    }
+
+    .tcg-attack-dmg {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: #2d3436;
+    }
+
+    .tcg-attack-desc {
+      font-size: 0.65rem;
+      color: #4b4b4b;
+      margin-top: 1px;
+    }
+
+    .tcg-flavor-box {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 6px;
+      padding: 5px 8px;
+      font-size: 0.68rem;
+      font-style: italic;
+      color: #2d3436;
+      line-height: 1.25;
+      margin-top: 4px;
+      min-height: 38px;
+      max-height: 44px;
+      overflow: hidden;
+    }
+
+    .tcg-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #2d3436;
+      margin-top: 4px;
+      padding-top: 3px;
+      border-top: 1px solid rgba(0,0,0,0.15);
+    }
+
+    .tcg-card-num {
+      font-weight: 900;
+      color: #2d3436;
+    }
+
+    /* Ocultos */
+    #galleryInput, #snapshotCanvas, #pokemonExportCanvas {
       display: none;
     }
 
@@ -536,10 +864,10 @@
 <body>
 
   <header>
-    <div class="badge-header">🐾 Michi-Sensor Activo</div>
+    <div class="badge-header">🐾 Michi-Sensor TCG Activo</div>
     <h1>Michi<span>Dex</span> 🐱</h1>
-    <p class="subtitle">Captura a los gatos de tu barrio y guárdalos en la nube</p>
-    <div class="cloud-status" id="cloudStatus">☁️ Base de datos activa</div>
+    <p class="subtitle">Captura gatos, edita su ficha y genera su carta coleccionable</p>
+    <div class="cloud-status" id="cloudStatus">☁️ Base de datos en vivo</div>
   </header>
 
   <main>
@@ -555,13 +883,7 @@
       <input type="file" id="galleryInput" accept="image/*">
     </section>
 
-    <!-- Indicador de guardado en la nube -->
-    <div class="loading-banner" id="loadingBanner">
-      <div class="spinner"></div>
-      <span>Guardando michi en la nube... ☁️🐾</span>
-    </div>
-
-    <!-- Tarjeta de Michi Capturado -->
+    <!-- Tarjeta de Michi Seleccionado / Capturado -->
     <section class="card-container" id="captureCardSection">
       <div class="michi-card" id="michiCard">
         <div class="michi-badge">🐾 Michi Capturado</div>
@@ -576,11 +898,24 @@
             🎉 ¡Michi atrapado con éxito!
           </div>
 
-          <div class="michi-name-row">
-            <h2 class="michi-name" id="cardName">Señor Bigotes</h2>
-            <span class="michi-date" id="cardDate">Hoy</span>
+          <!-- Distintivo de propietario -->
+          <div class="michi-owner-pill mine" id="cardOwnerPill">
+            👑 Subido por ti (Puedes editarlo)
           </div>
 
+          <!-- Nombre editable -->
+          <div class="input-group">
+            <label class="input-label" for="cardNameInput">Nombre del Michi:</label>
+            <input type="text" id="cardNameInput" class="michi-input" placeholder="Ponle un nombre...">
+          </div>
+
+          <!-- Descripción / Dato importante editable -->
+          <div class="input-group">
+            <label class="input-label" for="cardDescInput">Dato curioso / Descripción:</label>
+            <textarea id="cardDescInput" class="michi-textarea" placeholder="¿Qué le gusta hacer? Escribe un dato importante..."></textarea>
+          </div>
+
+          <!-- Estadísticas -->
           <div class="stats-grid">
             <div class="stat-box">
               <div class="stat-label">⚡ Ronroneo</div>
@@ -595,31 +930,45 @@
               <div class="stat-val" id="cardMood">Mimoso</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">🏆 Rango</div>
-              <div class="stat-val" id="cardRank">Capitán Felino</div>
+              <div class="stat-label">🎴 Tipo Pokémon</div>
+              <div class="stat-val" id="cardPokeType">🔥 Fuego</div>
             </div>
           </div>
 
-          <div class="card-actions">
-            <button class="btn btn-secondary" id="saveCardBtn" type="button">
+          <!-- Botones de Acción -->
+          <div class="card-actions-grid">
+            <button class="btn btn-pokemon btn-full" id="openPokemonCardBtn" type="button">
+              🎴 Descargar Carta Pokémon
+            </button>
+            <button class="btn btn-save-changes" id="saveChangesBtn" type="button">
               💾 Guardar
             </button>
             <button class="btn btn-share" id="shareBtn" type="button">
               📤 Compartir
+            </button>
+            <button class="btn btn-delete btn-full" id="deleteCatBtn" type="button">
+              🗑️ Liberar de la Colección
             </button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Historial / Colección Global -->
+    <!-- Colección de Michis con Filtro -->
     <section class="history-panel">
-      <div class="history-title">
-        <span>📖 Michi-Colección</span>
-        <span class="history-counter" id="historyCounter">0 atrapados</span>
+      <div class="history-header-row">
+        <span class="history-title">📖 Michi-Colección</span>
+        <span class="history-counter badge-header" id="historyCounter" style="margin:0;">0 atrapados</span>
       </div>
+
+      <!-- Filtro: Todos vs Solo los míos -->
+      <div class="history-tabs">
+        <button class="history-tab active" id="tabAll">Todos los Michis 🐾</button>
+        <button class="history-tab" id="tabMine">Solo los subidos por mí 👑</button>
+      </div>
+
       <div class="history-grid" id="historyGrid">
-        <div class="empty-history" id="emptyHistoryMsg">Aún no hay gatos registrados en la nube. ¡Sé el primero! 🐾</div>
+        <div class="empty-history" id="emptyHistoryMsg">Aún no hay gatos en la colección. ¡Sé el primero en atrapar uno! 🐾</div>
       </div>
     </section>
   </main>
@@ -639,21 +988,92 @@
     </div>
   </div>
 
+  <!-- MODAL DE CARTA POKÉMON -->
+  <div id="pokemonModal" class="poke-modal">
+    <div class="poke-modal-box">
+      <div class="poke-modal-top">
+        <span>🎴 Carta Colección TCG</span>
+        <button class="poke-close-btn" id="closePokemonModalBtn">✕</button>
+      </div>
+
+      <!-- Tarjeta Pokémon TCG Visual -->
+      <div class="tcg-card" id="tcgCardPreview">
+        <div class="tcg-inner" id="tcgInnerBg">
+          <div class="tcg-header">
+            <span class="tcg-stage">BÁSICO</span>
+            <span class="tcg-name" id="tcgName">Don Bigotes</span>
+            <div class="tcg-hp-wrap">
+              <span class="tcg-hp-lbl">PS</span>
+              <span class="tcg-hp-num" id="tcgHp">120</span>
+              <span class="tcg-type-icon" id="tcgTypeIcon">🔥</span>
+            </div>
+          </div>
+
+          <div class="tcg-photo-frame">
+            <img id="tcgPhoto" alt="Michi">
+          </div>
+
+          <div class="tcg-species-bar" id="tcgSpeciesBar">
+            Nº 025 • Michi Pokémon • Altura: 0.35m • Peso: 4.2kg
+          </div>
+
+          <div class="tcg-attacks">
+            <div class="tcg-attack">
+              <div class="tcg-attack-top">
+                <div class="tcg-attack-left">
+                  <span class="tcg-cost" id="tcgCost1">🐾</span>
+                  <span class="tcg-attack-title" id="tcgAtkName1">Amasar Pancita</span>
+                </div>
+                <span class="tcg-attack-dmg" id="tcgAtkDmg1">30</span>
+              </div>
+              <div class="tcg-attack-desc" id="tcgAtkDesc1">Cura 30 PS de ronroneo a este michi.</div>
+            </div>
+
+            <div class="tcg-attack">
+              <div class="tcg-attack-top">
+                <div class="tcg-attack-left">
+                  <span class="tcg-cost" id="tcgCost2">⚡⚡</span>
+                  <span class="tcg-attack-title" id="tcgAtkName2">Zoomies Nocturnos</span>
+                </div>
+                <span class="tcg-attack-dmg" id="tcgAtkDmg2">80</span>
+              </div>
+              <div class="tcg-attack-desc" id="tcgAtkDesc2">Corre a toda velocidad por el pasillo y bota un vaso.</div>
+            </div>
+          </div>
+
+          <div class="tcg-flavor-box" id="tcgFlavorBox">
+            "Le encanta dormir 18 horas al día y exigir atún a las 6 AM."
+          </div>
+
+          <div class="tcg-footer">
+            <span>debilidad 💧 x2</span>
+            <span>resistencia 📦 -20</span>
+            <span>retirada 🐟</span>
+            <span class="tcg-card-num">025/151 ★</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón de Descarga -->
+      <button class="btn btn-pokemon" id="downloadPokemonPngBtn" style="width: 100%;">
+        📥 Descargar Carta Pokémon (.PNG)
+      </button>
+    </div>
+  </div>
+
+  <!-- Canvas ocultos -->
   <canvas id="snapshotCanvas"></canvas>
+  <canvas id="pokemonExportCanvas" width="750" height="1050"></canvas>
 
   <footer>
-    <p>MichiDex Cloud • Fotos seguras en la nube 🐾</p>
+    <p>MichiDex TCG • Captura, colecciona y comparte 🐾</p>
   </footer>
 
-  <!-- SCRIPT CON FIREBASE + MÓDULOS MODERNOS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    /* ========================================================
-       CONFIGURACIÓN DE TU PROYECTO FIREBASE
-       Reemplaza estos valores con los que te da la consola de Firebase:
-       ======================================================== */
+    /* Configuración Firebase */
     const firebaseConfig = {
       apiKey: "AIzaSyADSNbQp5rhRU_JdkW0wXePqpJQazTY26E",
       authDomain: "michidex-38afc.firebaseapp.com",
@@ -663,10 +1083,8 @@
       appId: "1:603819077572:web:bdf0d1b3d8860132de7e91"
     };
 
-    // Verificamos si las credenciales ya fueron colocadas o usamos IndexedDB local
     const isFirebaseConfigured = firebaseConfig.apiKey !== "TU_API_KEY";
     const cloudStatus = document.getElementById('cloudStatus');
-
     let db = null;
 
     if (isFirebaseConfigured) {
@@ -676,45 +1094,55 @@
         cloudStatus.textContent = "☁️ Firebase Cloud conectado en vivo";
         cloudStatus.style.color = "#00b894";
       } catch (e) {
-        console.error("Error iniciando Firebase:", e);
-        cloudStatus.textContent = "⚠️ Error en Firebase (usando caché local)";
+        console.error("Error Firebase:", e);
+        cloudStatus.textContent = "⚠️ Error en Firebase (usando local)";
         cloudStatus.style.color = "#d63031";
       }
     } else {
-      cloudStatus.textContent = "💾 Modo Local (Agrega tus credenciales Firebase para sincronizar en la nube)";
+      cloudStatus.textContent = "💾 Modo Local Activo";
       cloudStatus.style.color = "#6c5ce7";
     }
 
-    // Datos lúdicos para la tarjeta
+    // ==========================================
+    // IDENTIFICADOR DE USUARIO ÚNICO (Dispositivo)
+    // Permite saber cuáles fotos fueron subidas por TI
+    // ==========================================
+    let myDeviceId = localStorage.getItem('michidex_device_id');
+    if (!myDeviceId) {
+      myDeviceId = 'karen_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+      localStorage.setItem('michidex_device_id', myDeviceId);
+    }
+
+    // Tipos Pokémon Felinos
+    const POKE_TYPES = [
+      { name: "Fuego", icon: "🔥", color: "#e17055", grad: "linear-gradient(135deg, #e17055, #fab1a0)", weakness: "💧 x2", resistance: "🌿 -20", atk1: "Patita Caliente", atk2: "Llamarada a las 3 AM" },
+      { name: "Eléctrico", icon: "⚡", color: "#f9ca24", grad: "linear-gradient(135deg, #f9ca24, #ffeaa7)", weakness: "🪨 x2", resistance: "⚡ -20", atk1: "Ronroneo Estático", atk2: "Ataque Zoomies Relámpago" },
+      { name: "Planta", icon: "🌿", color: "#2ecc71", grad: "linear-gradient(135deg, #2ecc71, #55efc4)", weakness: "🔥 x2", resistance: "💧 -20", atk1: "Hierba Gatera", atk2: "Morder la Planta de la Sala" },
+      { name: "Psíquico", icon: "👁️", color: "#a29bfe", grad: "linear-gradient(135deg, #a29bfe, #fd79a8)", weakness: "🌑 x2", resistance: "🥊 -20", atk1: "Mirada Hipnótica", atk2: "Saltar al Vacío Cósmico" },
+      { name: "Siniestro", icon: "🌑", color: "#636e72", grad: "linear-gradient(135deg, #636e72, #2d3436)", weakness: "🥊 x2", resistance: "👁️ -20", atk1: "Tirar Vaso de la Mesa", atk2: "Arañazo a Traición" },
+      { name: "Normal", icon: "🔘", color: "#b2bec3", grad: "linear-gradient(135deg, #dfe6e9, #b2bec3)", weakness: "🥊 x2", resistance: "👻 Inmune", atk1: "Amasar Pancita", atk2: "Siesta Indestructible" }
+    ];
+
     const CAT_NAMES = [
       "Don Bigotes", "Señor Pelusa", "Pantera de Sofá", "Capitán Ronroneo",
       "Gato Galáctico", "Michi Cósmico", "Michi Amasador", "Doña Siesta",
       "Duque de Atún", "Barón Peluche", "Lord Rayitas", "Sultán de la Caja"
     ];
 
-    const CELEBRATIONS = [
-      "🎉 ¡MIAU-SOMBROSO! ¡Un michi salvaje ha sido capturado!",
-      "😻 ¡Encontraste un ejemplar único en su especie!",
-      "🐟 ¡El detector de caricias fue 100% efectivo!",
-      "✨ ¡El michi no pudo resistirse a tu presencia!",
-      "🐈 ¡Nuevo michi registrado en la MichiDex con éxito!"
+    const DEFAULT_DESCRIPTIONS = [
+      "Duerme 18 horas al día sobre teclados de computador y exige atún a las 6 AM.",
+      "Experto en botar vasos de la mesa mientras te mira fijamente a los ojos.",
+      "Corre como alma que lleva el diablo por el pasillo a las 3 de la madrugada.",
+      "Amasa pan con sus patitas delanteras con una maestría artesanal insuperable.",
+      "Le tiene fobia absoluta a los pepinos pero le gana en pelea a cualquier perro."
     ];
 
     const RARITIES = [
-      { label: "⭐ Común de Sofá", color: "#fdcb6e", textColor: "#2d3436" },
-      { label: "✨ Raro Callejero", color: "#81ecec", textColor: "#0984e3" },
-      { label: "💎 Épico Panza Arriba", color: "#a29bfe", textColor: "#6c5ce7" },
-      { label: "🔥 Legendario Supremo", color: "#ff7675", textColor: "#d63031" }
+      { label: "⭐ Común", color: "#fdcb6e", textColor: "#2d3436" },
+      { label: "✨ Raro", color: "#81ecec", textColor: "#0984e3" },
+      { label: "💎 Épico", color: "#a29bfe", textColor: "#6c5ce7" },
+      { label: "🔥 Legendario", color: "#ff7675", textColor: "#d63031" }
     ];
-
-    const POWERS = [
-      "Amasar pan veloz", "Zoomies a las 3 AM", "Tirar vasos al piso",
-      "Dormir 20 horas", "Maullido hipnótico", "Desaparecer en cajas",
-      "Saltar a la nada", "Cazar rayos láser invisibles"
-    ];
-
-    const MOODS = ["Mimoso", "Exigente", "Dormilón", "Curioso", "Travieso", "Rey del hogar"];
-    const RANKS = ["Cazador Novato", "Guardián de Sofás", "Capitán Felino", "Miau-estro Supremo"];
 
     // Elementos DOM
     const openCameraBtn = document.getElementById('openCameraBtn');
@@ -726,36 +1154,63 @@
     const closeCameraBtn = document.getElementById('closeCameraBtn');
     const switchCameraBtn = document.getElementById('switchCameraBtn');
     const snapshotCanvas = document.getElementById('snapshotCanvas');
-    const loadingBanner = document.getElementById('loadingBanner');
 
+    // Tarjeta
     const captureCardSection = document.getElementById('captureCardSection');
     const michiPhotoImg = document.getElementById('michiPhotoImg');
     const cardRarity = document.getElementById('cardRarity');
     const cardCelebration = document.getElementById('cardCelebration');
-    const cardName = document.getElementById('cardName');
-    const cardDate = document.getElementById('cardDate');
+    const cardOwnerPill = document.getElementById('cardOwnerPill');
+    const cardNameInput = document.getElementById('cardNameInput');
+    const cardDescInput = document.getElementById('cardDescInput');
     const cardPurr = document.getElementById('cardPurr');
     const cardPower = document.getElementById('cardPower');
     const cardMood = document.getElementById('cardMood');
-    const cardRank = document.getElementById('cardRank');
-    const shareBtn = document.getElementById('shareBtn');
-    const saveCardBtn = document.getElementById('saveCardBtn');
+    const cardPokeType = document.getElementById('cardPokeType');
 
+    const saveChangesBtn = document.getElementById('saveChangesBtn');
+    const deleteCatBtn = document.getElementById('deleteCatBtn');
+    const shareBtn = document.getElementById('shareBtn');
+    const openPokemonCardBtn = document.getElementById('openPokemonCardBtn');
+
+    // Tabs & Grid
+    const tabAll = document.getElementById('tabAll');
+    const tabMine = document.getElementById('tabMine');
     const historyGrid = document.getElementById('historyGrid');
     const emptyHistoryMsg = document.getElementById('emptyHistoryMsg');
     const historyCounter = document.getElementById('historyCounter');
 
+    // Modal Pokémon
+    const pokemonModal = document.getElementById('pokemonModal');
+    const closePokemonModalBtn = document.getElementById('closePokemonModalBtn');
+    const downloadPokemonPngBtn = document.getElementById('downloadPokemonPngBtn');
+    const tcgInnerBg = document.getElementById('tcgInnerBg');
+    const tcgName = document.getElementById('tcgName');
+    const tcgHp = document.getElementById('tcgHp');
+    const tcgTypeIcon = document.getElementById('tcgTypeIcon');
+    const tcgPhoto = document.getElementById('tcgPhoto');
+    const tcgSpeciesBar = document.getElementById('tcgSpeciesBar');
+    const tcgAtkName1 = document.getElementById('tcgAtkName1');
+    const tcgAtkDmg1 = document.getElementById('tcgAtkDmg1');
+    const tcgAtkDesc1 = document.getElementById('tcgAtkDesc1');
+    const tcgAtkName2 = document.getElementById('tcgAtkName2');
+    const tcgAtkDmg2 = document.getElementById('tcgAtkDmg2');
+    const tcgAtkDesc2 = document.getElementById('tcgAtkDesc2');
+    const tcgFlavorBox = document.getElementById('tcgFlavorBox');
+    const pokemonExportCanvas = document.getElementById('pokemonExportCanvas');
+
     let currentStream = null;
     let currentFacingMode = 'environment';
     let currentCatData = null;
-    let localIndexedDbCats = [];
+    let allCats = [];
+    let activeFilter = 'all'; // 'all' o 'mine'
 
     // ==========================================
-    // INDEXED-DB (Fallback persistente ilimitado)
+    // INDEXED-DB (Fallback Local)
     // ==========================================
     function openLocalDB() {
       return new Promise((resolve, reject) => {
-        const req = indexedDB.open('MichiDexDB', 1);
+        const req = indexedDB.open('MichiDexDB_v2', 1);
         req.onupgradeneeded = (e) => {
           const dbInstance = e.target.result;
           if (!dbInstance.objectStoreNames.contains('cats')) {
@@ -772,9 +1227,15 @@
         const idb = await openLocalDB();
         const tx = idb.transaction('cats', 'readwrite');
         tx.objectStore('cats').put(cat);
-      } catch (e) {
-        console.warn("IndexedDB error:", e);
-      }
+      } catch (e) {}
+    }
+
+    async function deleteLocalCat(catId) {
+      try {
+        const idb = await openLocalDB();
+        const tx = idb.transaction('cats', 'readwrite');
+        tx.objectStore('cats').delete(catId);
+      } catch (e) {}
     }
 
     async function loadLocalCats() {
@@ -783,160 +1244,241 @@
         const tx = idb.transaction('cats', 'readonly');
         const req = tx.objectStore('cats').getAll();
         req.onsuccess = () => {
-          localIndexedDbCats = req.result || [];
-          localIndexedDbCats.sort((a,b) => b.timestamp - a.timestamp);
-          renderHistory(localIndexedDbCats);
+          allCats = req.result || [];
+          allCats.sort((a,b) => b.timestamp - a.timestamp);
+          renderFilteredHistory();
         };
       } catch (e) {}
     }
 
     // ==========================================
-    // RENDERIZADO DE LA COLECCIÓN
+    // RENDERIZADO DE COLECCIÓN Y FILTROS
     // ==========================================
-    function renderHistory(cats) {
-      if (!cats || cats.length === 0) {
-        emptyHistoryMsg.style.display = 'block';
-        historyCounter.textContent = '0 atrapados';
+    function renderFilteredHistory() {
+      const filtered = activeFilter === 'mine' 
+        ? allCats.filter(cat => (!cat.creatorId || cat.creatorId === myDeviceId))
+        : allCats;
+
+      historyCounter.textContent = `${filtered.length} ${filtered.length === 1 ? 'michi' : 'michis'}`;
+
+      if (filtered.length === 0) {
         historyGrid.innerHTML = '';
+        emptyHistoryMsg.style.display = 'block';
+        emptyHistoryMsg.textContent = activeFilter === 'mine' 
+          ? 'Aún no has subido ningún michi. ¡Toma o sube una foto! 🐾'
+          : 'Aún no hay gatos registrados. ¡Sé el primero! 🐾';
         historyGrid.appendChild(emptyHistoryMsg);
         return;
       }
 
       emptyHistoryMsg.style.display = 'none';
-      historyCounter.textContent = `${cats.length} ${cats.length === 1 ? 'atrapado' : 'atrapados'}`;
       historyGrid.innerHTML = '';
 
-      cats.forEach(cat => {
+      filtered.forEach(cat => {
         const item = document.createElement('div');
         item.className = 'history-item';
         item.title = cat.name;
-        item.innerHTML = `<img src="${cat.image}" alt="${cat.name}">`;
+        const isMine = (!cat.creatorId || cat.creatorId === myDeviceId);
+        item.innerHTML = `
+          <img src="${cat.image}" alt="${cat.name}">
+          ${isMine ? '<span class="mine-indicator">Tuyo</span>' : ''}
+        `;
         item.addEventListener('click', () => displayCatCard(cat, false));
         historyGrid.appendChild(item);
       });
     }
 
-    // Si Firebase está activo, sincronizamos en tiempo real
+    // Filtros de pestañas
+    tabAll.addEventListener('click', () => {
+      activeFilter = 'all';
+      tabAll.classList.add('active');
+      tabMine.classList.remove('active');
+      renderFilteredHistory();
+    });
+
+    tabMine.addEventListener('click', () => {
+      activeFilter = 'mine';
+      tabMine.classList.add('active');
+      tabAll.classList.remove('active');
+      renderFilteredHistory();
+    });
+
+    // Firestore Listener en Tiempo Real
     if (db) {
       try {
         const q = query(collection(db, "michis"), orderBy("timestamp", "desc"));
         onSnapshot(q, (snapshot) => {
-          const cats = [];
-          snapshot.forEach(doc => cats.push({ id: doc.id, ...doc.data() }));
-          renderHistory(cats);
+          allCats = [];
+          snapshot.forEach(docSnap => {
+            allCats.push({ docId: docSnap.id, ...docSnap.data() });
+          });
+          renderFilteredHistory();
         });
       } catch (e) {
-        console.error("Error al escuchar en Firestore:", e);
+        loadLocalCats();
       }
     } else {
       loadLocalCats();
     }
 
-    // Efecto de sonido felino
-    function playPurrSound() {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(450, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(750, audioCtx.currentTime + 0.15);
-        osc.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.35);
-
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.35);
-      } catch (e) {}
-    }
-
+    // ==========================================
+    // GENERACIÓN DE DATOS DEL GATO (Con stats Pokémon)
+    // ==========================================
     function generateRandomCatStats(imageSrc) {
       const rarity = RARITIES[Math.floor(Math.random() * RARITIES.length)];
       const name = CAT_NAMES[Math.floor(Math.random() * CAT_NAMES.length)];
-      const celebration = CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)];
-      const power = POWERS[Math.floor(Math.random() * POWERS.length)];
-      const mood = MOODS[Math.floor(Math.random() * MOODS.length)];
-      const rank = RANKS[Math.floor(Math.random() * RANKS.length)];
-      const purr = Math.floor(Math.random() * 40 + 70) + " dB";
-      
+      const desc = DEFAULT_DESCRIPTIONS[Math.floor(Math.random() * DEFAULT_DESCRIPTIONS.length)];
+      const pokeType = POKE_TYPES[Math.floor(Math.random() * POKE_TYPES.length)];
+      const purr = Math.floor(Math.random() * 35 + 75) + " dB";
+      const hp = Math.floor(Math.random() * 5 + 9) * 10; // 90 a 140 HP
+
       const now = new Date();
-      const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) + " " + 
-                      now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
 
       return {
+        id: 'michi_' + Date.now(),
         image: imageSrc,
-        name,
-        rarity,
-        celebration,
-        power,
-        mood,
-        rank,
-        purr,
+        name: name,
+        description: desc,
+        rarity: rarity,
+        pokeType: pokeType,
+        hp: hp,
+        purr: purr,
+        power: pokeType.atk1,
+        mood: "Juguetón",
         date: dateStr,
         timestamp: Date.now(),
-        id: 'michi_' + Date.now()
+        creatorId: myDeviceId // Identificador de quién lo subió
       };
     }
 
+    // ==========================================
+    // MOSTRAR TARJETA Y CONTROL DE EDICIÓN
+    // ==========================================
     function displayCatCard(catData, isNew = false) {
       currentCatData = catData;
       michiPhotoImg.src = catData.image;
-      cardName.textContent = catData.name;
-      cardCelebration.textContent = catData.celebration;
+      cardCelebration.textContent = isNew ? "🎉 ¡Nuevo Michi registrado con éxito!" : "📖 Ficha del Michi";
+
       cardRarity.textContent = catData.rarity.label;
       cardRarity.style.backgroundColor = catData.rarity.color;
       cardRarity.style.color = catData.rarity.textColor;
 
-      cardPower.textContent = catData.power;
-      cardMood.textContent = catData.mood;
-      cardRank.textContent = catData.rank;
-      cardPurr.textContent = catData.purr;
-      cardDate.textContent = catData.date;
+      // Asignar inputs editables
+      cardNameInput.value = catData.name || "Michi sin nombre";
+      cardDescInput.value = catData.description || "";
+
+      cardPurr.textContent = catData.purr || "85 dB";
+      cardPower.textContent = catData.power || "Amasar pancita";
+      cardMood.textContent = catData.mood || "Mimoso";
+      cardPokeType.textContent = `${catData.pokeType.icon} ${catData.pokeType.name}`;
+
+      // Control de Permisos: ¿Es subido por TI?
+      const isMine = (!catData.creatorId || catData.creatorId === myDeviceId);
+
+      if (isMine) {
+        cardOwnerPill.className = "michi-owner-pill mine";
+        cardOwnerPill.textContent = "👑 Subido por ti (Puedes editarlo)";
+        cardNameInput.disabled = false;
+        cardDescInput.disabled = false;
+        saveChangesBtn.style.display = "inline-flex";
+        deleteCatBtn.style.display = "inline-flex";
+      } else {
+        cardOwnerPill.className = "michi-owner-pill others";
+        cardOwnerPill.textContent = "🐾 Subido por otro explorador (Solo lectura)";
+        cardNameInput.disabled = true;
+        cardDescInput.disabled = true;
+        saveChangesBtn.style.display = "none";
+        deleteCatBtn.style.display = "none";
+      }
 
       captureCardSection.classList.remove('active');
       void captureCardSection.offsetWidth;
       captureCardSection.classList.add('active');
 
-      if (isNew) playPurrSound();
       captureCardSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
+    // Guardar cambios editados (Nombre / Descripción)
+    saveChangesBtn.addEventListener('click', async () => {
+      if (!currentCatData) return;
+      const newName = cardNameInput.value.trim() || "Michi";
+      const newDesc = cardDescInput.value.trim();
+
+      currentCatData.name = newName;
+      currentCatData.description = newDesc;
+
+      // 1. Guardar local
+      await saveLocalCat(currentCatData);
+
+      // 2. Si está en Firestore, actualizar
+      if (db && currentCatData.docId) {
+        try {
+          await updateDoc(doc(db, "michis", currentCatData.docId), {
+            name: newName,
+            description: newDesc
+          });
+          cloudStatus.textContent = "☁️ ¡Cambios guardados en la nube!";
+          cloudStatus.style.color = "#00b894";
+        } catch (e) {
+          console.warn("Error al actualizar en Firestore:", e);
+        }
+      }
+
+      alert("✅ ¡Ficha del michi actualizada!");
+      renderFilteredHistory();
+    });
+
+    // Eliminar / Liberar michi de la colección
+    deleteCatBtn.addEventListener('click', async () => {
+      if (!currentCatData) return;
+      if (!confirm(`¿Estás seguro de que quieres liberar a "${currentCatData.name}" de la colección?`)) return;
+
+      await deleteLocalCat(currentCatData.id);
+
+      if (db && currentCatData.docId) {
+        try {
+          await deleteDoc(doc(db, "michis", currentCatData.docId));
+        } catch (e) {}
+      }
+
+      // Remover localmente de la lista
+      allCats = allCats.filter(c => c.id !== currentCatData.id && c.docId !== currentCatData.docId);
+      captureCardSection.classList.remove('active');
+      renderFilteredHistory();
+      alert("🐾 El michi ha sido liberado.");
+    });
+
     // ==========================================
-    // PROCESAMIENTO Y GUARDADO INMEDIATO (FIRESTORE)
+    // PROCESAMIENTO INMEDIATO DE FOTO
     // ==========================================
     async function processCatImage(dataUrl) {
-      // 1. Mostrar la tarjeta de inmediato en pantalla
       const catData = generateRandomCatStats(dataUrl);
       displayCatCard(catData, true);
 
-      // 2. Guardar en almacenamiento local persistente
+      // Guardar localmente
       await saveLocalCat(catData);
       loadLocalCats();
 
-      // 3. Subir directamente a Cloud Firestore (ultra rápido y sin errores 404)
+      // Guardar en Firestore directo
       if (isFirebaseConfigured && db) {
         cloudStatus.textContent = "☁️ Sincronizando con la nube...";
         cloudStatus.style.color = "#fdcb6e";
 
         try {
-          // La imagen optimizada pesa ~45 KB (cabe sobradamente en Firestore, límite 1 MB)
-          await addDoc(collection(db, "michis"), catData);
+          const docRef = await addDoc(collection(db, "michis"), catData);
+          catData.docId = docRef.id;
           cloudStatus.textContent = "☁️ ¡Guardado en la nube en vivo!";
           cloudStatus.style.color = "#00b894";
         } catch (err) {
           console.warn("Error en Firestore:", err);
-          cloudStatus.textContent = "💾 Guardado en tu dispositivo (revisa reglas de Firestore)";
+          cloudStatus.textContent = "💾 Guardado en tu dispositivo";
           cloudStatus.style.color = "#e85547";
         }
       }
     }
 
-    // Redimensionar y comprimir imagen (máx 800px para que suba al instante)
+    // Comprimir foto
     function compressImage(imgSource, maxWidth = 800) {
       const canvas = document.createElement('canvas');
       let width = imgSource.videoWidth || imgSource.width;
@@ -952,26 +1494,17 @@
       const ctx = canvas.getContext('2d');
       ctx.drawImage(imgSource, 0, 0, width, height);
 
-      // Comprimir a 75% de calidad JPEG (pesa solo ~40-60 KB)
       return canvas.toDataURL('image/jpeg', 0.75);
     }
 
-    // ==========================================
-    // CÁMARA
-    // ==========================================
+    // Cámara y Galería
     async function startCamera() {
       try {
         if (currentStream) stopCamera();
-
         const constraints = {
-          video: {
-            facingMode: currentFacingMode,
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          },
+          video: { facingMode: currentFacingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: false
         };
-
         currentStream = await navigator.mediaDevices.getUserMedia(constraints);
         cameraStream.srcObject = currentStream;
         cameraModal.classList.add('active');
@@ -980,8 +1513,8 @@
           currentStream = await navigator.mediaDevices.getUserMedia({ video: true });
           cameraStream.srcObject = currentStream;
           cameraModal.classList.add('active');
-        } catch (fallbackErr) {
-          alert("No se pudo acceder a la cámara. Comprueba los permisos o usa 'Galería'.");
+        } catch (e) {
+          alert("No se pudo abrir la cámara. Comprueba permisos o usa 'Galería'.");
         }
       }
     }
@@ -997,12 +1530,11 @@
 
     function takeSnapshot() {
       if (!cameraStream.videoWidth) return;
-      const optimizedDataUrl = compressImage(cameraStream);
+      const optimized = compressImage(cameraStream);
       stopCamera();
-      processCatImage(optimizedDataUrl);
+      processCatImage(optimized);
     }
 
-    // Listeners
     openCameraBtn.addEventListener('click', () => {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         galleryInput.setAttribute('capture', 'environment');
@@ -1035,46 +1567,263 @@
             const optimized = compressImage(img);
             processCatImage(optimized);
           };
-          img.onerror = () => {
-            alert("No se pudo procesar la imagen seleccionada. Por favor prueba con otra foto.");
-          };
+          img.onerror = () => alert("No se pudo procesar la imagen seleccionada.");
           img.src = evt.target.result;
           galleryInput.value = '';
-        };
-        reader.onerror = () => {
-          alert("Error al leer el archivo desde tu dispositivo.");
         };
         reader.readAsDataURL(file);
       }
     });
 
-    saveCardBtn.addEventListener('click', () => {
-      if (!currentCatData) return;
-      const link = document.createElement('a');
-      link.download = `Michi-${currentCatData.name.replace(/\s+/g, '_')}.jpg`;
-      link.href = currentCatData.image;
-      link.target = "_blank";
-      link.click();
-    });
-
     shareBtn.addEventListener('click', async () => {
       if (!currentCatData) return;
-      const shareText = `🐾 ¡Acabo de registrar a "${currentCatData.name}" en MichiDex Cloud! Nivel de ronroneo: ${currentCatData.purr}. Rango: ${currentCatData.rank}. 😸`;
-
+      const text = `🐾 ¡Mira este michi capturado en MichiDex: "${currentCatData.name}"! Tipo: ${currentCatData.pokeType.name}. ¿Cuántos gatos tienes en tu colección? 😸`;
       if (navigator.share) {
         try {
-          await navigator.share({
-            title: '¡Michi Capturado!',
-            text: shareText,
-            url: window.location.href
-          });
-        } catch (err) {}
+          await navigator.share({ title: 'MichiDex', text: text, url: window.location.href });
+        } catch (e) {}
       } else {
-        navigator.clipboard.writeText(shareText).then(() => {
-          alert("¡Mensaje copiado al portapapeles!");
-        }).catch(() => alert(shareText));
+        navigator.clipboard.writeText(text).then(() => alert("¡Mensaje copiado al portapapeles!"));
       }
     });
+
+    // ==========================================
+    // CARTA POKÉMON (MODAL & DESCARGA PNG)
+    // ==========================================
+    openPokemonCardBtn.addEventListener('click', () => {
+      if (!currentCatData) return;
+
+      const type = currentCatData.pokeType || POKE_TYPES[0];
+      tcgInnerBg.style.background = type.grad;
+      tcgName.textContent = currentCatData.name;
+      tcgHp.textContent = currentCatData.hp || 120;
+      tcgTypeIcon.textContent = type.icon;
+      tcgPhoto.src = currentCatData.image;
+
+      tcgAtkName1.textContent = type.atk1;
+      tcgAtkName2.textContent = type.atk2;
+
+      tcgFlavorBox.textContent = `"${currentCatData.description || 'Gato muy curioso y dormilón.'}"`;
+
+      pokemonModal.classList.add('active');
+    });
+
+    closePokemonModalBtn.addEventListener('click', () => {
+      pokemonModal.classList.remove('active');
+    });
+
+    // RENDERIZADO ULTRA NÍTIDO EN CANVAS PARA DESCARGA DIRECTA EN PNG (750x1050 px)
+    downloadPokemonPngBtn.addEventListener('click', () => {
+      if (!currentCatData) return;
+
+      const cat = currentCatData;
+      const type = cat.pokeType || POKE_TYPES[0];
+      const canvas = pokemonExportCanvas;
+      const ctx = canvas.getContext('2d');
+
+      // 1. Fondo Amarillo / Borde Dorado Pokémon
+      ctx.fillStyle = "#f1c40f";
+      roundRect(ctx, 0, 0, 750, 1050, 36, true, false);
+
+      // Borde exterior
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#d4ac0d";
+      roundRect(ctx, 3, 3, 744, 1044, 34, false, true);
+
+      // 2. Fondo interior coloreado con gradiente del Tipo
+      const grad = ctx.createLinearGradient(35, 35, 715, 1015);
+      if (type.name === "Fuego") { grad.addColorStop(0, "#e17055"); grad.addColorStop(1, "#fab1a0"); }
+      else if (type.name === "Eléctrico") { grad.addColorStop(0, "#f9ca24"); grad.addColorStop(1, "#ffeaa7"); }
+      else if (type.name === "Planta") { grad.addColorStop(0, "#2ecc71"); grad.addColorStop(1, "#55efc4"); }
+      else if (type.name === "Psíquico") { grad.addColorStop(0, "#a29bfe"); grad.addColorStop(1, "#fd79a8"); }
+      else if (type.name === "Siniestro") { grad.addColorStop(0, "#636e72"); grad.addColorStop(1, "#2d3436"); }
+      else { grad.addColorStop(0, "#dfe6e9"); grad.addColorStop(1, "#b2bec3"); }
+
+      ctx.fillStyle = grad;
+      roundRect(ctx, 32, 32, 686, 986, 26, true, false);
+
+      // Borde del fondo interior
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(255,255,255,0.4)";
+      roundRect(ctx, 32, 32, 686, 986, 26, false, true);
+
+      // 3. Encabezado: Fase "BÁSICO", Nombre, PS y Tipo
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      roundRect(ctx, 55, 52, 95, 30, 8, true, false);
+      ctx.fillStyle = "#2d3436";
+      ctx.font = "900 16px sans-serif";
+      ctx.fillText("BÁSICO", 68, 73);
+
+      // Nombre
+      ctx.fillStyle = "#2d3436";
+      ctx.font = "900 34px sans-serif";
+      ctx.fillText(cat.name, 165, 77);
+
+      // PS (Vida)
+      ctx.fillStyle = "#d63031";
+      ctx.font = "800 20px sans-serif";
+      ctx.fillText("PS", 575, 76);
+      ctx.font = "900 36px sans-serif";
+      ctx.fillText(cat.hp || 120, 605, 78);
+
+      // Icono tipo
+      ctx.font = "32px sans-serif";
+      ctx.fillText(type.icon, 672, 78);
+
+      // 4. Foto del Michi
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        // Marco dorado de la foto
+        ctx.fillStyle = "#f1c40f";
+        roundRect(ctx, 55, 105, 640, 395, 16, true, false);
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "#b7950b";
+        roundRect(ctx, 55, 105, 640, 395, 16, false, true);
+
+        // Dibujar imagen recortada con proporción
+        ctx.save();
+        roundRect(ctx, 60, 110, 630, 385, 12, false, false);
+        ctx.clip();
+        drawCoverImage(ctx, img, 60, 110, 630, 385);
+        ctx.restore();
+
+        // 5. Cinta de subespecie debajo de la foto
+        const ribbonGrad = ctx.createLinearGradient(70, 510, 680, 510);
+        ribbonGrad.addColorStop(0, "#f39c12");
+        ribbonGrad.addColorStop(1, "#f1c40f");
+        ctx.fillStyle = ribbonGrad;
+        roundRect(ctx, 75, 510, 600, 28, 8, true, false);
+        ctx.fillStyle = "#2c3e50";
+        ctx.font = "800 15px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`Nº 025 • Pokémon Gato • Altura: 0.35 m • Peso: 4.2 kg`, 375, 530);
+        ctx.textAlign = "left";
+
+        // 6. Ataques
+        // Ataque 1
+        ctx.fillStyle = "#2d3436";
+        ctx.font = "30px sans-serif";
+        ctx.fillText("🐾", 75, 595);
+
+        ctx.font = "900 28px sans-serif";
+        ctx.fillText(type.atk1, 130, 595);
+
+        ctx.font = "900 32px sans-serif";
+        ctx.fillText("30", 635, 595);
+
+        ctx.font = "italic 18px sans-serif";
+        ctx.fillStyle = "#4b4b4b";
+        ctx.fillText("Cura 30 PS de ronroneo a este michi durante el turno.", 130, 625);
+
+        // Separador
+        ctx.strokeStyle = "rgba(0,0,0,0.12)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(75, 650);
+        ctx.lineTo(675, 650);
+        ctx.stroke();
+
+        // Ataque 2
+        ctx.fillStyle = "#2d3436";
+        ctx.font = "28px sans-serif";
+        ctx.fillText(`${type.icon}${type.icon}`, 75, 715);
+
+        ctx.font = "900 28px sans-serif";
+        ctx.fillText(type.atk2, 140, 715);
+
+        ctx.font = "900 32px sans-serif";
+        ctx.fillText("80", 635, 715);
+
+        ctx.font = "italic 18px sans-serif";
+        ctx.fillStyle = "#4b4b4b";
+        ctx.fillText("Corre a toda velocidad por la casa y derriba vasos de la mesa.", 140, 745);
+
+        // 7. Caja de Descripción / Dato Curioso
+        ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+        roundRect(ctx, 60, 785, 630, 115, 12, true, false);
+        ctx.strokeStyle = "rgba(0,0,0,0.1)";
+        roundRect(ctx, 60, 785, 630, 115, 12, false, true);
+
+        ctx.fillStyle = "#2d3436";
+        ctx.font = "italic 20px Georgia, serif";
+        wrapText(ctx, `"${cat.description || 'Le encanta dormir sobre teclados y exigir comida a deshoras.'}"`, 80, 825, 590, 28);
+
+        // 8. Pie de página
+        ctx.strokeStyle = "rgba(0,0,0,0.2)";
+        ctx.beginPath();
+        ctx.moveTo(60, 925);
+        ctx.lineTo(690, 925);
+        ctx.stroke();
+
+        ctx.fillStyle = "#2d3436";
+        ctx.font = "800 16px sans-serif";
+        ctx.fillText(`debilidad ${type.weakness}`, 70, 955);
+        ctx.fillText(`resistencia ${type.resistance}`, 275, 955);
+        ctx.fillText(`retirada 🐟`, 495, 955);
+        ctx.fillText(`025/151 ★`, 620, 955);
+
+        // Descarga
+        const link = document.createElement('a');
+        link.download = `Carta-Pokemon-${cat.name.replace(/\s+/g, '_')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      };
+      img.src = cat.image;
+    });
+
+    // Funciones de dibujo canvas auxiliares
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+
+    function drawCoverImage(ctx, img, x, y, w, h) {
+      const imgRatio = img.width / img.height;
+      const targetRatio = w / h;
+      let sWidth = img.width;
+      let sHeight = img.height;
+      let sx = 0;
+      let sy = 0;
+
+      if (imgRatio > targetRatio) {
+        sWidth = img.height * targetRatio;
+        sx = (img.width - sWidth) / 2;
+      } else {
+        sHeight = img.width / targetRatio;
+        sy = (img.height - sHeight) / 2;
+      }
+
+      ctx.drawImage(img, sx, sy, sWidth, sHeight, x, y, w, h);
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          ctx.fillText(line, x, y);
+          line = words[n] + ' ';
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, y);
+    }
   </script>
 </body>
 </html>
