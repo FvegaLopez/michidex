@@ -649,7 +649,6 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
     /* ========================================================
        CONFIGURACIÓN DE TU PROYECTO FIREBASE
@@ -669,13 +668,11 @@
     const cloudStatus = document.getElementById('cloudStatus');
 
     let db = null;
-    let storage = null;
 
     if (isFirebaseConfigured) {
       try {
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
-        storage = getStorage(app);
         cloudStatus.textContent = "☁️ Firebase Cloud conectado en vivo";
         cloudStatus.style.color = "#00b894";
       } catch (e) {
@@ -910,43 +907,37 @@
     }
 
     // ==========================================
-    // PROCESAMIENTO Y GUARDADO (CLOUD O LOCAL)
+    // PROCESAMIENTO Y GUARDADO INMEDIATO (FIRESTORE)
     // ==========================================
     async function processCatImage(dataUrl) {
-      loadingBanner.classList.add('active');
+      // 1. Mostrar la tarjeta de inmediato en pantalla
       const catData = generateRandomCatStats(dataUrl);
-
-      if (isFirebaseConfigured && db && storage) {
-        try {
-          // 1. Subir la imagen a Firebase Storage
-          const filename = `cats/${catData.id}.jpg`;
-          const storageRef = ref(storage, filename);
-          await uploadString(storageRef, dataUrl, 'data_url');
-          
-          // 2. Obtener URL de descarga permanente
-          const permanentUrl = await getDownloadURL(storageRef);
-          catData.image = permanentUrl;
-
-          // 3. Guardar registro en Cloud Firestore
-          await addDoc(collection(db, "michis"), catData);
-        } catch (err) {
-          console.error("Error subiendo a Firebase:", err);
-          alert("Aviso: No se pudo subir a Firebase. Guardando localmente.");
-          await saveLocalCat(catData);
-          loadLocalCats();
-        }
-      } else {
-        // Guardado local sin límite en IndexedDB
-        await saveLocalCat(catData);
-        loadLocalCats();
-      }
-
-      loadingBanner.classList.remove('active');
       displayCatCard(catData, true);
+
+      // 2. Guardar en almacenamiento local persistente
+      await saveLocalCat(catData);
+      loadLocalCats();
+
+      // 3. Subir directamente a Cloud Firestore (ultra rápido y sin errores 404)
+      if (isFirebaseConfigured && db) {
+        cloudStatus.textContent = "☁️ Sincronizando con la nube...";
+        cloudStatus.style.color = "#fdcb6e";
+
+        try {
+          // La imagen optimizada pesa ~45 KB (cabe sobradamente en Firestore, límite 1 MB)
+          await addDoc(collection(db, "michis"), catData);
+          cloudStatus.textContent = "☁️ ¡Guardado en la nube en vivo!";
+          cloudStatus.style.color = "#00b894";
+        } catch (err) {
+          console.warn("Error en Firestore:", err);
+          cloudStatus.textContent = "💾 Guardado en tu dispositivo (revisa reglas de Firestore)";
+          cloudStatus.style.color = "#e85547";
+        }
+      }
     }
 
-    // Redimensionar imagen para optimizar subida
-    function compressImage(imgSource, maxWidth = 1000) {
+    // Redimensionar y comprimir imagen (máx 800px para que suba al instante)
+    function compressImage(imgSource, maxWidth = 800) {
       const canvas = document.createElement('canvas');
       let width = imgSource.videoWidth || imgSource.width;
       let height = imgSource.videoHeight || imgSource.height;
@@ -961,7 +952,8 @@
       const ctx = canvas.getContext('2d');
       ctx.drawImage(imgSource, 0, 0, width, height);
 
-      return canvas.toDataURL('image/jpeg', 0.85);
+      // Comprimir a 75% de calidad JPEG (pesa solo ~40-60 KB)
+      return canvas.toDataURL('image/jpeg', 0.75);
     }
 
     // ==========================================
@@ -1034,7 +1026,7 @@
     });
 
     galleryInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
+      const file = e.target.files && e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(evt) {
@@ -1043,8 +1035,14 @@
             const optimized = compressImage(img);
             processCatImage(optimized);
           };
+          img.onerror = () => {
+            alert("No se pudo procesar la imagen seleccionada. Por favor prueba con otra foto.");
+          };
           img.src = evt.target.result;
           galleryInput.value = '';
+        };
+        reader.onerror = () => {
+          alert("Error al leer el archivo desde tu dispositivo.");
         };
         reader.readAsDataURL(file);
       }
