@@ -466,7 +466,25 @@
       background: #fff;
     }
 
-    .michi-input:disabled, .michi-textarea:disabled {
+    .michi-type-select {
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 800;
+      border: 2px solid #edf0f2;
+      border-radius: 10px;
+      padding: 6px 8px;
+      background: #fff;
+      color: var(--dark);
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .michi-type-select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .michi-input:disabled, .michi-textarea:disabled, .michi-type-select:disabled {
       background: #f8f9fa;
       color: #636e72;
       cursor: not-allowed;
@@ -485,6 +503,9 @@
       border: 1px solid #edf0f2;
       padding: 9px 12px;
       border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .stat-label {
@@ -677,6 +698,7 @@
       position: relative;
       user-select: none;
       border: 2px solid #d4ac0d;
+      transition: all 0.3s;
     }
 
     .tcg-inner {
@@ -686,8 +708,9 @@
       padding: 8px 10px;
       display: flex;
       flex-direction: column;
-      border: 1px solid rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.3);
       position: relative;
+      transition: all 0.3s;
     }
 
     .tcg-header {
@@ -701,16 +724,16 @@
       font-size: 0.62rem;
       font-weight: 900;
       letter-spacing: 0.5px;
-      background: rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.25);
       padding: 2px 6px;
       border-radius: 4px;
-      color: #2d3436;
+      color: #fff;
     }
 
     .tcg-name {
       font-size: 1rem;
       font-weight: 900;
-      color: #2d3436;
+      color: #fff;
       flex: 1;
       margin-left: 6px;
       white-space: nowrap;
@@ -727,13 +750,13 @@
     .tcg-hp-lbl {
       font-size: 0.65rem;
       font-weight: 800;
-      color: #d63031;
+      color: #ff4757;
     }
 
     .tcg-hp-num {
       font-size: 1.1rem;
       font-weight: 900;
-      color: #d63031;
+      color: #ff4757;
     }
 
     .tcg-type-icon {
@@ -778,7 +801,7 @@
     }
 
     .tcg-attack {
-      border-bottom: 1px solid rgba(0,0,0,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
       padding-bottom: 4px;
     }
 
@@ -801,29 +824,29 @@
     .tcg-attack-title {
       font-size: 0.85rem;
       font-weight: 800;
-      color: #2d3436;
+      color: #fff;
     }
 
     .tcg-attack-dmg {
       font-size: 0.95rem;
       font-weight: 900;
-      color: #2d3436;
+      color: #fff;
     }
 
     .tcg-attack-desc {
       font-size: 0.65rem;
-      color: #4b4b4b;
+      color: #dcdde1;
       margin-top: 1px;
     }
 
     .tcg-flavor-box {
-      background: rgba(255, 255, 255, 0.7);
-      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 6px;
       padding: 5px 8px;
       font-size: 0.68rem;
       font-style: italic;
-      color: #2d3436;
+      color: #f5f6fa;
       line-height: 1.25;
       margin-top: 4px;
       min-height: 38px;
@@ -837,15 +860,14 @@
       justify-content: space-between;
       font-size: 0.62rem;
       font-weight: 700;
-      color: #2d3436;
+      color: #fff;
       margin-top: 4px;
       padding-top: 3px;
-      border-top: 1px solid rgba(0,0,0,0.15);
+      border-top: 1px solid rgba(255,255,255,0.2);
     }
 
     .tcg-card-num {
       font-weight: 900;
-      color: #2d3436;
     }
 
     /* Ocultos */
@@ -864,7 +886,7 @@
 <body>
 
   <header>
-    <div class="badge-header">🐾 Michi-Sensor TCG Activo</div>
+    <div class="badge-header">🐾 Michi-Sensor TCG Inteligente</div>
     <h1>Michi<span>Dex</span> 🐱</h1>
     <p class="subtitle">Captura gatos, edita su ficha y genera su carta coleccionable</p>
     <div class="cloud-status" id="cloudStatus">☁️ Base de datos en vivo</div>
@@ -915,7 +937,7 @@
             <textarea id="cardDescInput" class="michi-textarea" placeholder="¿Qué le gusta hacer? Escribe un dato importante..."></textarea>
           </div>
 
-          <!-- Estadísticas -->
+          <!-- Estadísticas con Selector Inteligente de Tipo -->
           <div class="stats-grid">
             <div class="stat-box">
               <div class="stat-label">⚡ Ronroneo</div>
@@ -931,7 +953,15 @@
             </div>
             <div class="stat-box">
               <div class="stat-label">🎴 Tipo Pokémon</div>
-              <div class="stat-val" id="cardPokeType">🔥 Fuego</div>
+              <select id="cardPokeTypeSelect" class="michi-type-select">
+                <option value="Fuego">🔥 Fuego (Michi Naranja)</option>
+                <option value="Siniestro">🌑 Siniestro (Pantera)</option>
+                <option value="Psíquico">👁️ Psíquico (Cósmico)</option>
+                <option value="Eléctrico">⚡ Eléctrico (Zoomies)</option>
+                <option value="Planta">🌿 Planta (Hierba gatera)</option>
+                <option value="Agua">💧 Agua (Pescador)</option>
+                <option value="Normal">🔘 Normal (Dormilón)</option>
+              </select>
             </div>
           </div>
 
@@ -996,11 +1026,11 @@
         <button class="poke-close-btn" id="closePokemonModalBtn">✕</button>
       </div>
 
-      <!-- Tarjeta Pokémon TCG Visual -->
+      <!-- Tarjeta Pokémon TCG Visual con Contraste Inteligente -->
       <div class="tcg-card" id="tcgCardPreview">
         <div class="tcg-inner" id="tcgInnerBg">
           <div class="tcg-header">
-            <span class="tcg-stage">BÁSICO</span>
+            <span class="tcg-stage" id="tcgStage">BÁSICO</span>
             <span class="tcg-name" id="tcgName">Don Bigotes</span>
             <div class="tcg-hp-wrap">
               <span class="tcg-hp-lbl">PS</span>
@@ -1018,7 +1048,7 @@
           </div>
 
           <div class="tcg-attacks">
-            <div class="tcg-attack">
+            <div class="tcg-attack" id="tcgAttackBorder1">
               <div class="tcg-attack-top">
                 <div class="tcg-attack-left">
                   <span class="tcg-cost" id="tcgCost1">🐾</span>
@@ -1029,7 +1059,7 @@
               <div class="tcg-attack-desc" id="tcgAtkDesc1">Cura 30 PS de ronroneo a este michi.</div>
             </div>
 
-            <div class="tcg-attack">
+            <div class="tcg-attack" id="tcgAttackBorder2" style="border-bottom:none;">
               <div class="tcg-attack-top">
                 <div class="tcg-attack-left">
                   <span class="tcg-cost" id="tcgCost2">⚡⚡</span>
@@ -1045,11 +1075,11 @@
             "Le encanta dormir 18 horas al día y exigir atún a las 6 AM."
           </div>
 
-          <div class="tcg-footer">
-            <span>debilidad 💧 x2</span>
-            <span>resistencia 📦 -20</span>
+          <div class="tcg-footer" id="tcgFooter">
+            <span id="tcgWeakness">debilidad 💧 x2</span>
+            <span id="tcgResistance">resistencia 📦 -20</span>
             <span>retirada 🐟</span>
-            <span class="tcg-card-num">025/151 ★</span>
+            <span class="tcg-card-num" id="tcgCardNum">025/151 ★</span>
           </div>
         </div>
       </div>
@@ -1113,14 +1143,158 @@
       localStorage.setItem('michidex_device_id', myDeviceId);
     }
 
-    // Tipos Pokémon Felinos
+    // ==========================================
+    // SISTEMA INTELIGENTE DE TIPOS Y CONTRASTE
+    // Define colores de texto, sombras y fondos adaptativos
+    // ==========================================
     const POKE_TYPES = [
-      { name: "Fuego", icon: "🔥", color: "#e17055", grad: "linear-gradient(135deg, #e17055, #fab1a0)", weakness: "💧 x2", resistance: "🌿 -20", atk1: "Patita Caliente", atk2: "Llamarada a las 3 AM" },
-      { name: "Eléctrico", icon: "⚡", color: "#f9ca24", grad: "linear-gradient(135deg, #f9ca24, #ffeaa7)", weakness: "🪨 x2", resistance: "⚡ -20", atk1: "Ronroneo Estático", atk2: "Ataque Zoomies Relámpago" },
-      { name: "Planta", icon: "🌿", color: "#2ecc71", grad: "linear-gradient(135deg, #2ecc71, #55efc4)", weakness: "🔥 x2", resistance: "💧 -20", atk1: "Hierba Gatera", atk2: "Morder la Planta de la Sala" },
-      { name: "Psíquico", icon: "👁️", color: "#a29bfe", grad: "linear-gradient(135deg, #a29bfe, #fd79a8)", weakness: "🌑 x2", resistance: "🥊 -20", atk1: "Mirada Hipnótica", atk2: "Saltar al Vacío Cósmico" },
-      { name: "Siniestro", icon: "🌑", color: "#636e72", grad: "linear-gradient(135deg, #636e72, #2d3436)", weakness: "🥊 x2", resistance: "👁️ -20", atk1: "Tirar Vaso de la Mesa", atk2: "Arañazo a Traición" },
-      { name: "Normal", icon: "🔘", color: "#b2bec3", grad: "linear-gradient(135deg, #dfe6e9, #b2bec3)", weakness: "🥊 x2", resistance: "👻 Inmune", atk1: "Amasar Pancita", atk2: "Siesta Indestructible" }
+      { 
+        name: "Fuego", 
+        icon: "🔥", 
+        isDark: true,
+        color: "#d63031", 
+        grad: ["#c0392b", "#e17055"],
+        cssGrad: "linear-gradient(135deg, #c0392b, #e17055)",
+        textColor: "#ffffff",
+        subTextColor: "#ffeaa7",
+        flavorBg: "rgba(0, 0, 0, 0.4)",
+        flavorBorder: "rgba(255, 234, 167, 0.35)",
+        flavorText: "#ffffff",
+        stageBg: "rgba(255, 255, 255, 0.25)",
+        stageColor: "#ffffff",
+        divider: "rgba(255, 255, 255, 0.25)",
+        cardBorder: "#f1c40f",
+        weakness: "💧 x2", 
+        resistance: "🌿 -20", 
+        atk1: { name: "Patitas Calientes", cost: "🔥", dmg: 30, desc: "Amasa la pancita con calor acogedor." },
+        atk2: { name: "Llamarada 3 AM", cost: "🔥🔥", dmg: 95, desc: "Zoomies incandescentes que despiertan a todo el vecindario." }
+      },
+      { 
+        name: "Siniestro", 
+        icon: "🌑", 
+        isDark: true,
+        color: "#1e272e", 
+        grad: ["#1e272e", "#090a0f"],
+        cssGrad: "linear-gradient(135deg, #2d3436, #090a0f)",
+        textColor: "#ffffff",
+        subTextColor: "#d2dae2",
+        flavorBg: "rgba(255, 255, 255, 0.12)",
+        flavorBorder: "rgba(255, 255, 255, 0.25)",
+        flavorText: "#f1f2f6",
+        stageBg: "rgba(255, 255, 255, 0.2)",
+        stageColor: "#ffffff",
+        divider: "rgba(255, 255, 255, 0.2)",
+        cardBorder: "#bdc3c7", // Plateado obsidiana
+        weakness: "🥊 x2", 
+        resistance: "👁️ -20", 
+        atk1: { name: "Tirar Vaso al Suelo", cost: "🌑", dmg: 40, desc: "Te mira fijamente a los ojos mientras empuja el vaso." },
+        atk2: { name: "Ataque a Traición", cost: "🌑🌑", dmg: 105, desc: "Aparece desde la oscuridad del pasillo y muerde tus tobillos." }
+      },
+      { 
+        name: "Psíquico", 
+        icon: "👁️", 
+        isDark: true,
+        color: "#574b90", 
+        grad: ["#574b90", "#303952"],
+        cssGrad: "linear-gradient(135deg, #574b90, #303952)",
+        textColor: "#ffffff",
+        subTextColor: "#dcdde1",
+        flavorBg: "rgba(0, 0, 0, 0.4)",
+        flavorBorder: "rgba(255, 255, 255, 0.25)",
+        flavorText: "#ffffff",
+        stageBg: "rgba(255, 255, 255, 0.25)",
+        stageColor: "#ffffff",
+        divider: "rgba(255, 255, 255, 0.25)",
+        cardBorder: "#f1c40f",
+        weakness: "🌑 x2", 
+        resistance: "🥊 -20", 
+        atk1: { name: "Mirada Hipnótica", cost: "👁️", dmg: 35, desc: "Controla tu mente para que le abras un sobre de comida húmeda." },
+        atk2: { name: "Salto al Vacío", cost: "👁️👁️", dmg: 90, desc: "Traspasa dimensiones y aterriza encima de la lámpara del techo." }
+      },
+      { 
+        name: "Eléctrico", 
+        icon: "⚡", 
+        isDark: false,
+        color: "#f9ca24", 
+        grad: ["#f9ca24", "#ffeaa7"],
+        cssGrad: "linear-gradient(135deg, #f9ca24, #ffeaa7)",
+        textColor: "#2d3436",
+        subTextColor: "#57606f",
+        flavorBg: "rgba(255, 255, 255, 0.8)",
+        flavorBorder: "rgba(0, 0, 0, 0.12)",
+        flavorText: "#2d3436",
+        stageBg: "rgba(255, 255, 255, 0.85)",
+        stageColor: "#2d3436",
+        divider: "rgba(0, 0, 0, 0.15)",
+        cardBorder: "#f1c40f",
+        weakness: "🪨 x2", 
+        resistance: "⚡ -20", 
+        atk1: { name: "Ronroneo Estático", cost: "⚡", dmg: 30, desc: "Se frota con una manta polar y transmite 10.000 voltios de amor." },
+        atk2: { name: "Zoomies Relámpago", cost: "⚡⚡", dmg: 85, desc: "Rebota en las paredes a la velocidad del sonido sin frenos." }
+      },
+      { 
+        name: "Planta", 
+        icon: "🌿", 
+        isDark: false,
+        color: "#2ecc71", 
+        grad: ["#2ecc71", "#55efc4"],
+        cssGrad: "linear-gradient(135deg, #2ecc71, #55efc4)",
+        textColor: "#2d3436",
+        subTextColor: "#2f3542",
+        flavorBg: "rgba(255, 255, 255, 0.8)",
+        flavorBorder: "rgba(0, 0, 0, 0.12)",
+        flavorText: "#2d3436",
+        stageBg: "rgba(255, 255, 255, 0.85)",
+        stageColor: "#2d3436",
+        divider: "rgba(0, 0, 0, 0.15)",
+        cardBorder: "#f1c40f",
+        weakness: "🔥 x2", 
+        resistance: "💧 -20", 
+        atk1: { name: "Hierba Gatera", cost: "🌿", dmg: 35, desc: "Entra en trance psicodélico y rueda sobre su pancita." },
+        atk2: { name: "Morder el Helecho", cost: "🌿🌿", dmg: 80, desc: "Destroza la planta favorita del living sin ningún remordimiento." }
+      },
+      { 
+        name: "Agua", 
+        icon: "💧", 
+        isDark: true,
+        color: "#0984e3", 
+        grad: ["#0984e3", "#74b9ff"],
+        cssGrad: "linear-gradient(135deg, #0984e3, #74b9ff)",
+        textColor: "#ffffff",
+        subTextColor: "#dff9fb",
+        flavorBg: "rgba(0, 0, 0, 0.35)",
+        flavorBorder: "rgba(255, 255, 255, 0.25)",
+        flavorText: "#ffffff",
+        stageBg: "rgba(255, 255, 255, 0.25)",
+        stageColor: "#ffffff",
+        divider: "rgba(255, 255, 255, 0.25)",
+        cardBorder: "#f1c40f",
+        weakness: "⚡ x2", 
+        resistance: "🔥 -20", 
+        atk1: { name: "Pesca de Acuario", cost: "💧", dmg: 30, desc: "Mete la patita en el vaso de agua de tu velador." },
+        atk2: { name: "Furia Antibaño", cost: "💧💧", dmg: 90, desc: "Si siente agua en su lomo trepa las paredes como Spider-Man." }
+      },
+      { 
+        name: "Normal", 
+        icon: "🔘", 
+        isDark: false,
+        color: "#b2bec3", 
+        grad: ["#dfe6e9", "#b2bec3"],
+        cssGrad: "linear-gradient(135deg, #dfe6e9, #b2bec3)",
+        textColor: "#2d3436",
+        subTextColor: "#57606f",
+        flavorBg: "rgba(255, 255, 255, 0.8)",
+        flavorBorder: "rgba(0, 0, 0, 0.12)",
+        flavorText: "#2d3436",
+        stageBg: "rgba(255, 255, 255, 0.85)",
+        stageColor: "#2d3436",
+        divider: "rgba(0, 0, 0, 0.15)",
+        cardBorder: "#f1c40f",
+        weakness: "🥊 x2", 
+        resistance: "👻 Inmune", 
+        atk1: { name: "Amasar Pancita", cost: "🔘", dmg: 30, desc: "Amasa con las uñas afiladas directamente sobre tu estómago." },
+        atk2: { name: "Siesta Inamovible", cost: "🔘🔘", dmg: 75, desc: "Se duerme encima de tus piernas y te impide levantarte por horas." }
+      }
     ];
 
     const CAT_NAMES = [
@@ -1138,10 +1312,10 @@
     ];
 
     const RARITIES = [
-      { label: "⭐ Común", color: "#fdcb6e", textColor: "#2d3436" },
-      { label: "✨ Raro", color: "#81ecec", textColor: "#0984e3" },
-      { label: "💎 Épico", color: "#a29bfe", textColor: "#6c5ce7" },
-      { label: "🔥 Legendario", color: "#ff7675", textColor: "#d63031" }
+      { label: "⭐ Común", color: "#fdcb6e", textColor: "#2d3436", hpBonus: 0, dmgBonus: 0 },
+      { label: "✨ Raro", color: "#81ecec", textColor: "#0984e3", hpBonus: 10, dmgBonus: 10 },
+      { label: "💎 Épico", color: "#a29bfe", textColor: "#6c5ce7", hpBonus: 20, dmgBonus: 20 },
+      { label: "🔥 Legendario", color: "#ff7675", textColor: "#d63031", hpBonus: 40, dmgBonus: 30 }
     ];
 
     // Elementos DOM
@@ -1166,7 +1340,7 @@
     const cardPurr = document.getElementById('cardPurr');
     const cardPower = document.getElementById('cardPower');
     const cardMood = document.getElementById('cardMood');
-    const cardPokeType = document.getElementById('cardPokeType');
+    const cardPokeTypeSelect = document.getElementById('cardPokeTypeSelect');
 
     const saveChangesBtn = document.getElementById('saveChangesBtn');
     const deleteCatBtn = document.getElementById('deleteCatBtn');
@@ -1184,26 +1358,40 @@
     const pokemonModal = document.getElementById('pokemonModal');
     const closePokemonModalBtn = document.getElementById('closePokemonModalBtn');
     const downloadPokemonPngBtn = document.getElementById('downloadPokemonPngBtn');
+    const tcgCardPreview = document.getElementById('tcgCardPreview');
     const tcgInnerBg = document.getElementById('tcgInnerBg');
+    const tcgStage = document.getElementById('tcgStage');
     const tcgName = document.getElementById('tcgName');
     const tcgHp = document.getElementById('tcgHp');
     const tcgTypeIcon = document.getElementById('tcgTypeIcon');
     const tcgPhoto = document.getElementById('tcgPhoto');
     const tcgSpeciesBar = document.getElementById('tcgSpeciesBar');
+    const tcgCost1 = document.getElementById('tcgCost1');
     const tcgAtkName1 = document.getElementById('tcgAtkName1');
     const tcgAtkDmg1 = document.getElementById('tcgAtkDmg1');
     const tcgAtkDesc1 = document.getElementById('tcgAtkDesc1');
+    const tcgAttackBorder1 = document.getElementById('tcgAttackBorder1');
+    const tcgCost2 = document.getElementById('tcgCost2');
     const tcgAtkName2 = document.getElementById('tcgAtkName2');
     const tcgAtkDmg2 = document.getElementById('tcgAtkDmg2');
     const tcgAtkDesc2 = document.getElementById('tcgAtkDesc2');
     const tcgFlavorBox = document.getElementById('tcgFlavorBox');
+    const tcgFooter = document.getElementById('tcgFooter');
+    const tcgWeakness = document.getElementById('tcgWeakness');
+    const tcgResistance = document.getElementById('tcgResistance');
+    const tcgCardNum = document.getElementById('tcgCardNum');
     const pokemonExportCanvas = document.getElementById('pokemonExportCanvas');
 
     let currentStream = null;
     let currentFacingMode = 'environment';
     let currentCatData = null;
     let allCats = [];
-    let activeFilter = 'all'; // 'all' o 'mine'
+    let activeFilter = 'all';
+
+    // Helper: Encontrar objeto Tipo por nombre
+    function getTypeByName(name) {
+      return POKE_TYPES.find(t => t.name.toLowerCase() === (name || "").toLowerCase()) || POKE_TYPES[0];
+    }
 
     // ==========================================
     // INDEXED-DB (Fallback Local)
@@ -1330,7 +1518,10 @@
       const desc = DEFAULT_DESCRIPTIONS[Math.floor(Math.random() * DEFAULT_DESCRIPTIONS.length)];
       const pokeType = POKE_TYPES[Math.floor(Math.random() * POKE_TYPES.length)];
       const purr = Math.floor(Math.random() * 35 + 75) + " dB";
-      const hp = Math.floor(Math.random() * 5 + 9) * 10; // 90 a 140 HP
+      
+      // Vida base escalada por rareza
+      const baseHp = 90 + Math.floor(Math.random() * 3) * 10;
+      const hp = baseHp + rarity.hpBonus;
 
       const now = new Date();
       const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
@@ -1341,14 +1532,14 @@
         name: name,
         description: desc,
         rarity: rarity,
-        pokeType: pokeType,
+        pokeTypeName: pokeType.name,
         hp: hp,
         purr: purr,
-        power: pokeType.atk1,
+        power: pokeType.atk1.name,
         mood: "Juguetón",
         date: dateStr,
         timestamp: Date.now(),
-        creatorId: myDeviceId // Identificador de quién lo subió
+        creatorId: myDeviceId
       };
     }
 
@@ -1369,9 +1560,10 @@
       cardDescInput.value = catData.description || "";
 
       cardPurr.textContent = catData.purr || "85 dB";
-      cardPower.textContent = catData.power || "Amasar pancita";
+      const typeObj = getTypeByName(catData.pokeTypeName || (catData.pokeType && catData.pokeType.name));
+      cardPower.textContent = typeObj.atk1.name;
       cardMood.textContent = catData.mood || "Mimoso";
-      cardPokeType.textContent = `${catData.pokeType.icon} ${catData.pokeType.name}`;
+      cardPokeTypeSelect.value = typeObj.name;
 
       // Control de Permisos: ¿Es subido por TI?
       const isMine = (!catData.creatorId || catData.creatorId === myDeviceId);
@@ -1381,6 +1573,7 @@
         cardOwnerPill.textContent = "👑 Subido por ti (Puedes editarlo)";
         cardNameInput.disabled = false;
         cardDescInput.disabled = false;
+        cardPokeTypeSelect.disabled = false;
         saveChangesBtn.style.display = "inline-flex";
         deleteCatBtn.style.display = "inline-flex";
       } else {
@@ -1388,6 +1581,7 @@
         cardOwnerPill.textContent = "🐾 Subido por otro explorador (Solo lectura)";
         cardNameInput.disabled = true;
         cardDescInput.disabled = true;
+        cardPokeTypeSelect.disabled = true;
         saveChangesBtn.style.display = "none";
         deleteCatBtn.style.display = "none";
       }
@@ -1399,14 +1593,16 @@
       captureCardSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // Guardar cambios editados (Nombre / Descripción)
+    // Guardar cambios editados (Nombre, Descripción y Tipo)
     saveChangesBtn.addEventListener('click', async () => {
       if (!currentCatData) return;
       const newName = cardNameInput.value.trim() || "Michi";
       const newDesc = cardDescInput.value.trim();
+      const newType = cardPokeTypeSelect.value;
 
       currentCatData.name = newName;
       currentCatData.description = newDesc;
+      currentCatData.pokeTypeName = newType;
 
       // 1. Guardar local
       await saveLocalCat(currentCatData);
@@ -1416,7 +1612,8 @@
         try {
           await updateDoc(doc(db, "michis", currentCatData.docId), {
             name: newName,
-            description: newDesc
+            description: newDesc,
+            pokeTypeName: newType
           });
           cloudStatus.textContent = "☁️ ¡Cambios guardados en la nube!";
           cloudStatus.style.color = "#00b894";
@@ -1442,7 +1639,6 @@
         } catch (e) {}
       }
 
-      // Remover localmente de la lista
       allCats = allCats.filter(c => c.id !== currentCatData.id && c.docId !== currentCatData.docId);
       captureCardSection.classList.remove('active');
       renderFilteredHistory();
@@ -1456,11 +1652,9 @@
       const catData = generateRandomCatStats(dataUrl);
       displayCatCard(catData, true);
 
-      // Guardar localmente
       await saveLocalCat(catData);
       loadLocalCats();
 
-      // Guardar en Firestore directo
       if (isFirebaseConfigured && db) {
         cloudStatus.textContent = "☁️ Sincronizando con la nube...";
         cloudStatus.style.color = "#fdcb6e";
@@ -1478,7 +1672,6 @@
       }
     }
 
-    // Comprimir foto
     function compressImage(imgSource, maxWidth = 800) {
       const canvas = document.createElement('canvas');
       let width = imgSource.videoWidth || imgSource.width;
@@ -1577,7 +1770,7 @@
 
     shareBtn.addEventListener('click', async () => {
       if (!currentCatData) return;
-      const text = `🐾 ¡Mira este michi capturado en MichiDex: "${currentCatData.name}"! Tipo: ${currentCatData.pokeType.name}. ¿Cuántos gatos tienes en tu colección? 😸`;
+      const text = `🐾 ¡Mira este michi capturado en MichiDex: "${currentCatData.name}"! Tipo: ${currentCatData.pokeTypeName}. ¿Cuántos gatos tienes en tu colección? 😸`;
       if (navigator.share) {
         try {
           await navigator.share({ title: 'MichiDex', text: text, url: window.location.href });
@@ -1588,22 +1781,68 @@
     });
 
     // ==========================================
-    // CARTA POKÉMON (MODAL & DESCARGA PNG)
+    // CARTA POKÉMON (MODAL & DESCARGA PNG CON INTELIGENCIA VISUAL)
     // ==========================================
     openPokemonCardBtn.addEventListener('click', () => {
       if (!currentCatData) return;
 
-      const type = currentCatData.pokeType || POKE_TYPES[0];
-      tcgInnerBg.style.background = type.grad;
+      const type = getTypeByName(currentCatData.pokeTypeName || (currentCatData.pokeType && currentCatData.pokeType.name));
+      const isLegendary = currentCatData.rarity && currentCatData.rarity.label.includes("Legendario");
+
+      // Borde especial para Legendarios
+      tcgCardPreview.style.borderColor = isLegendary ? "#ffd700" : (type.cardBorder || "#f1c40f");
+      tcgCardPreview.style.boxShadow = isLegendary 
+        ? "0 0 25px rgba(255, 215, 0, 0.7), 0 10px 30px rgba(0,0,0,0.6)" 
+        : "0 10px 30px rgba(0,0,0,0.6)";
+
+      // Gradiente de fondo adaptativo
+      tcgInnerBg.style.background = type.cssGrad;
+
+      // Contraste Inteligente en Textos según el fondo (Oscuro -> Blanco, Claro -> Oscuro)
+      const textColor = type.textColor;
+      const subTextColor = type.subTextColor;
+
       tcgName.textContent = currentCatData.name;
+      tcgName.style.color = textColor;
+
+      tcgStage.style.background = type.stageBg;
+      tcgStage.style.color = type.stageColor;
+
       tcgHp.textContent = currentCatData.hp || 120;
       tcgTypeIcon.textContent = type.icon;
       tcgPhoto.src = currentCatData.image;
 
-      tcgAtkName1.textContent = type.atk1;
-      tcgAtkName2.textContent = type.atk2;
+      // Ataques inteligentes vinculados al elemento
+      tcgCost1.textContent = type.atk1.cost;
+      tcgAtkName1.textContent = type.atk1.name;
+      tcgAtkName1.style.color = textColor;
+      tcgAtkDmg1.textContent = type.atk1.dmg;
+      tcgAtkDmg1.style.color = textColor;
+      tcgAtkDesc1.textContent = type.atk1.desc;
+      tcgAtkDesc1.style.color = subTextColor;
+      tcgAttackBorder1.style.borderColor = type.divider;
 
+      tcgCost2.textContent = type.atk2.cost;
+      tcgAtkName2.textContent = type.atk2.name;
+      tcgAtkName2.style.color = textColor;
+      tcgAtkDmg2.textContent = type.atk2.dmg + (currentCatData.rarity ? currentCatData.rarity.dmgBonus : 0);
+      tcgAtkDmg2.style.color = textColor;
+      tcgAtkDesc2.textContent = type.atk2.desc;
+      tcgAtkDesc2.style.color = subTextColor;
+
+      // Caja de descripción inteligente
+      tcgFlavorBox.style.background = type.flavorBg;
+      tcgFlavorBox.style.borderColor = type.flavorBorder;
+      tcgFlavorBox.style.color = type.flavorText;
       tcgFlavorBox.textContent = `"${currentCatData.description || 'Gato muy curioso y dormilón.'}"`;
+
+      // Footer con contraste adaptativo
+      tcgFooter.style.color = textColor;
+      tcgFooter.style.borderColor = type.divider;
+      tcgWeakness.textContent = `debilidad ${type.weakness}`;
+      tcgResistance.textContent = `resistencia ${type.resistance}`;
+      tcgCardNum.textContent = isLegendary ? "★★★ HOLO RARE" : "025/151 ★";
+      tcgCardNum.style.color = isLegendary ? "#ffeaa7" : textColor;
 
       pokemonModal.classList.add('active');
     });
@@ -1617,50 +1856,47 @@
       if (!currentCatData) return;
 
       const cat = currentCatData;
-      const type = cat.pokeType || POKE_TYPES[0];
+      const type = getTypeByName(cat.pokeTypeName || (cat.pokeType && cat.pokeType.name));
+      const isLegendary = cat.rarity && cat.rarity.label.includes("Legendario");
       const canvas = pokemonExportCanvas;
       const ctx = canvas.getContext('2d');
 
-      // 1. Fondo Amarillo / Borde Dorado Pokémon
-      ctx.fillStyle = "#f1c40f";
+      // 1. Fondo Amarillo / Borde Dorado Pokémon (o Plateado si es Siniestro / Holo)
+      ctx.fillStyle = isLegendary ? "#ffd700" : (type.cardBorder || "#f1c40f");
       roundRect(ctx, 0, 0, 750, 1050, 36, true, false);
 
       // Borde exterior
       ctx.lineWidth = 6;
-      ctx.strokeStyle = "#d4ac0d";
+      ctx.strokeStyle = isLegendary ? "#d4ac0d" : "#b7950b";
       roundRect(ctx, 3, 3, 744, 1044, 34, false, true);
 
       // 2. Fondo interior coloreado con gradiente del Tipo
       const grad = ctx.createLinearGradient(35, 35, 715, 1015);
-      if (type.name === "Fuego") { grad.addColorStop(0, "#e17055"); grad.addColorStop(1, "#fab1a0"); }
-      else if (type.name === "Eléctrico") { grad.addColorStop(0, "#f9ca24"); grad.addColorStop(1, "#ffeaa7"); }
-      else if (type.name === "Planta") { grad.addColorStop(0, "#2ecc71"); grad.addColorStop(1, "#55efc4"); }
-      else if (type.name === "Psíquico") { grad.addColorStop(0, "#a29bfe"); grad.addColorStop(1, "#fd79a8"); }
-      else if (type.name === "Siniestro") { grad.addColorStop(0, "#636e72"); grad.addColorStop(1, "#2d3436"); }
-      else { grad.addColorStop(0, "#dfe6e9"); grad.addColorStop(1, "#b2bec3"); }
+      grad.addColorStop(0, type.grad[0]);
+      grad.addColorStop(1, type.grad[1]);
 
       ctx.fillStyle = grad;
       roundRect(ctx, 32, 32, 686, 986, 26, true, false);
 
       // Borde del fondo interior
       ctx.lineWidth = 2;
-      ctx.strokeStyle = "rgba(255,255,255,0.4)";
+      ctx.strokeStyle = type.divider;
       roundRect(ctx, 32, 32, 686, 986, 26, false, true);
 
-      // 3. Encabezado: Fase "BÁSICO", Nombre, PS y Tipo
-      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      // 3. Encabezado con contraste inteligente: Fase "BÁSICO", Nombre, PS y Tipo
+      ctx.fillStyle = type.stageBg;
       roundRect(ctx, 55, 52, 95, 30, 8, true, false);
-      ctx.fillStyle = "#2d3436";
+      ctx.fillStyle = type.stageColor;
       ctx.font = "900 16px sans-serif";
       ctx.fillText("BÁSICO", 68, 73);
 
-      // Nombre
-      ctx.fillStyle = "#2d3436";
+      // Nombre del Gato (Blanco en fondos oscuros, Oscuro en fondos claros)
+      ctx.fillStyle = type.textColor;
       ctx.font = "900 34px sans-serif";
       ctx.fillText(cat.name, 165, 77);
 
       // PS (Vida)
-      ctx.fillStyle = "#d63031";
+      ctx.fillStyle = "#ff4757";
       ctx.font = "800 20px sans-serif";
       ctx.fillText("PS", 575, 76);
       ctx.font = "900 36px sans-serif";
@@ -1675,10 +1911,10 @@
       img.crossOrigin = "anonymous";
       img.onload = () => {
         // Marco dorado de la foto
-        ctx.fillStyle = "#f1c40f";
+        ctx.fillStyle = isLegendary ? "#ffd700" : "#f1c40f";
         roundRect(ctx, 55, 105, 640, 395, 16, true, false);
         ctx.lineWidth = 4;
-        ctx.strokeStyle = "#b7950b";
+        ctx.strokeStyle = isLegendary ? "#d4ac0d" : "#b7950b";
         roundRect(ctx, 55, 105, 640, 395, 16, false, true);
 
         // Dibujar imagen recortada con proporción
@@ -1697,27 +1933,27 @@
         ctx.fillStyle = "#2c3e50";
         ctx.font = "800 15px sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(`Nº 025 • Pokémon Gato • Altura: 0.35 m • Peso: 4.2 kg`, 375, 530);
+        ctx.fillText(`Nº 025 • Michi ${cat.rarity ? cat.rarity.label : 'Raro'} • Altura: 0.35 m • Peso: 4.2 kg`, 375, 530);
         ctx.textAlign = "left";
 
-        // 6. Ataques
+        // 6. Ataques con contraste inteligente
         // Ataque 1
-        ctx.fillStyle = "#2d3436";
-        ctx.font = "30px sans-serif";
-        ctx.fillText("🐾", 75, 595);
+        ctx.font = "28px sans-serif";
+        ctx.fillText(type.atk1.cost, 75, 595);
 
+        ctx.fillStyle = type.textColor;
         ctx.font = "900 28px sans-serif";
-        ctx.fillText(type.atk1, 130, 595);
+        ctx.fillText(type.atk1.name, 135, 595);
 
         ctx.font = "900 32px sans-serif";
-        ctx.fillText("30", 635, 595);
+        ctx.fillText(String(type.atk1.dmg), 635, 595);
 
         ctx.font = "italic 18px sans-serif";
-        ctx.fillStyle = "#4b4b4b";
-        ctx.fillText("Cura 30 PS de ronroneo a este michi durante el turno.", 130, 625);
+        ctx.fillStyle = type.subTextColor;
+        ctx.fillText(type.atk1.desc, 135, 625);
 
-        // Separador
-        ctx.strokeStyle = "rgba(0,0,0,0.12)";
+        // Separador inteligente
+        ctx.strokeStyle = type.divider;
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(75, 650);
@@ -1725,45 +1961,48 @@
         ctx.stroke();
 
         // Ataque 2
-        ctx.fillStyle = "#2d3436";
-        ctx.font = "28px sans-serif";
-        ctx.fillText(`${type.icon}${type.icon}`, 75, 715);
+        const atk2Dmg = type.atk2.dmg + (cat.rarity ? cat.rarity.dmgBonus : 0);
+        ctx.font = "26px sans-serif";
+        ctx.fillText(type.atk2.cost, 75, 715);
 
+        ctx.fillStyle = type.textColor;
         ctx.font = "900 28px sans-serif";
-        ctx.fillText(type.atk2, 140, 715);
+        ctx.fillText(type.atk2.name, 140, 715);
 
         ctx.font = "900 32px sans-serif";
-        ctx.fillText("80", 635, 715);
+        ctx.fillText(String(atk2Dmg), 635, 715);
 
         ctx.font = "italic 18px sans-serif";
-        ctx.fillStyle = "#4b4b4b";
-        ctx.fillText("Corre a toda velocidad por la casa y derriba vasos de la mesa.", 140, 745);
+        ctx.fillStyle = type.subTextColor;
+        ctx.fillText(type.atk2.desc, 140, 745);
 
-        // 7. Caja de Descripción / Dato Curioso
-        ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+        // 7. Caja de Descripción con fondo y texto inteligente
+        ctx.fillStyle = type.flavorBg;
         roundRect(ctx, 60, 785, 630, 115, 12, true, false);
-        ctx.strokeStyle = "rgba(0,0,0,0.1)";
+        ctx.strokeStyle = type.flavorBorder;
         roundRect(ctx, 60, 785, 630, 115, 12, false, true);
 
-        ctx.fillStyle = "#2d3436";
+        ctx.fillStyle = type.flavorText;
         ctx.font = "italic 20px Georgia, serif";
         wrapText(ctx, `"${cat.description || 'Le encanta dormir sobre teclados y exigir comida a deshoras.'}"`, 80, 825, 590, 28);
 
-        // 8. Pie de página
-        ctx.strokeStyle = "rgba(0,0,0,0.2)";
+        // 8. Pie de página con contraste inteligente
+        ctx.strokeStyle = type.divider;
         ctx.beginPath();
         ctx.moveTo(60, 925);
         ctx.lineTo(690, 925);
         ctx.stroke();
 
-        ctx.fillStyle = "#2d3436";
+        ctx.fillStyle = type.textColor;
         ctx.font = "800 16px sans-serif";
         ctx.fillText(`debilidad ${type.weakness}`, 70, 955);
         ctx.fillText(`resistencia ${type.resistance}`, 275, 955);
         ctx.fillText(`retirada 🐟`, 495, 955);
-        ctx.fillText(`025/151 ★`, 620, 955);
+        
+        ctx.fillStyle = isLegendary ? "#ffeaa7" : type.textColor;
+        ctx.fillText(isLegendary ? "★★★ HOLO RARE" : "025/151 ★", 605, 955);
 
-        // Descarga
+        // Descarga directa PNG
         const link = document.createElement('a');
         link.download = `Carta-Pokemon-${cat.name.replace(/\s+/g, '_')}.png`;
         link.href = canvas.toDataURL('image/png');
@@ -1772,7 +2011,7 @@
       img.src = cat.image;
     });
 
-    // Funciones de dibujo canvas auxiliares
+    // Funciones auxiliares Canvas
     function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
       ctx.beginPath();
       ctx.moveTo(x + radius, y);
